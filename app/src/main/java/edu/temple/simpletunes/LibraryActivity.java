@@ -8,20 +8,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+public class LibraryActivity extends AppCompatActivity {
+    private static final String TAG = "LibraryActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_library);
     }
-
     @Override
     protected void onResume() {
-        Button libraryButton = findViewById(R.id.libraryButton);
-        libraryButton.setOnClickListener(new View.OnClickListener() {
+        Button browserButton = findViewById(R.id.openDocumentButton);
+        browserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, LibraryActivity.class);
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("audio/mpeg");
                 startActivity(i);
             }
         });
