@@ -28,7 +28,8 @@ For Running on Android Studio:
 
 - The app will now be installed in your device apps 
 
-- The app will now run when selected
+- The app will now run when selected and show the following screen:
+![This is a screenshot.](image.jpg)
 
 # How to contribute
 Follow this project board to know the latest status of the project: https://github.com/cis3296s22/SimpleTunes/projects/1
