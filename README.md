@@ -20,13 +20,15 @@ For Running on Android Studio:
 
 -Download the latest version of Android Studio: https://developer.android.com/studio/?gclid=Cj0KCQjw5-WRBhCKARIsAAId9FnNsgtxKZxxRB4C50f-VUj4B6p3EitP48TIwFI0db2dmWF_nqooFJYaAjwtEALw_wcB&gclsrc=aw.ds
 
-- Download the latest release of Simple Tunes
+- Click the play button on the top right to open the emulator and then open an internet browser
 
-- After opening Android studio, use the file tab to click open and select Simple Tunes from where you downloaded it
+- Download the apk file found at this link: https://github.com/cis3296s22/SimpleTunes/raw/main/app-debug.apk through the android studio emulator
 
-- On the top right of android studio click the play button which will prompt you to select a device and finally run the application.
+- Find the downloaded file in your file system, select the file and choose install 
 
-- You will now open a device that shows you our application!
+- The app will now be installed in your device apps 
+
+- The app will now run when selected
 
 # How to contribute
 Follow this project board to know the latest status of the project: https://github.com/cis3296s22/SimpleTunes/projects/1
