@@ -17,11 +17,11 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private static final int REQUEST_MP3 = 23;
     private MediaPlayer player;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        player = new MediaPlayer();
     }
 
     @Override
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
 
                 mediaPlayerPlay(audioFile);
+
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -54,12 +55,15 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The mediaPlayerPlay method is used to initialize the mediaPlayer
      * play the Uri provided. Also checks if reset is needed to play new audio file.
+     * Plays asynchronously
      * @param myUri The Uri to start playing.
      */
     private void mediaPlayerPlay(Uri myUri) {
 
-        if (player.isPlaying()) {
-            player.reset();
+        if (player == null) {
+            player = new MediaPlayer();
+        } else {
+            player.reset();   // so can change data source etc.
         }
 
         player.setAudioAttributes(
@@ -73,12 +77,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            player.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        player.start();
+        player.prepareAsync();
+        player.setOnPreparedListener(MediaPlayer::start);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        if (player != null) {
+            if (player.isPlaying()) {
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
+        super.onDestroy();
+
+
+    }
 }
