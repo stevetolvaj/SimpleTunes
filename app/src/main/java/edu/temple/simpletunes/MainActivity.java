@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
-    private MediaPlayer player;
+    private static MediaPlayer player;
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
 
 
