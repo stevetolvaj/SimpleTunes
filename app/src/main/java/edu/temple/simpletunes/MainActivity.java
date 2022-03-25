@@ -29,11 +29,12 @@ public class MainActivity extends AppCompatActivity {
             if(result.getResultCode() == RESULT_OK && result.getData() == null){
                 Log.d(TAG, "onActivityResult: data was null");
             }else{
-                assert result.getData() != null;
-                Uri audioFile = result.getData().getData();
-                Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
+                if (result.getData() != null) {
+                    Uri audioFile = result.getData().getData();
+                    Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
 
-                mediaPlayerPlay(audioFile);
+                    mediaPlayerPlay(audioFile);
+                }
             }
 
         });
