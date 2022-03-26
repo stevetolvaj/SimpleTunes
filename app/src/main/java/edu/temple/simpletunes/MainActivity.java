@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import java.io.IOException;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Button browserButton = findViewById(R.id.browserButton);
+        ImageButton browserButton = findViewById(R.id.browserButton);
 
         browserButton.setOnClickListener(view -> {
             Intent i = new Intent();
