@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import java.io.IOException;
 
@@ -29,11 +30,12 @@ public class MainActivity extends AppCompatActivity {
             if(result.getResultCode() == RESULT_OK && result.getData() == null){
                 Log.d(TAG, "onActivityResult: data was null");
             }else{
-                assert result.getData() != null;
-                Uri audioFile = result.getData().getData();
-                Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
+                if (result.getData() != null) {
+                    Uri audioFile = result.getData().getData();
+                    Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
 
-                mediaPlayerPlay(audioFile);
+                    mediaPlayerPlay(audioFile);
+                }
             }
 
         });
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Button browserButton = findViewById(R.id.browserButton);
+        ImageButton browserButton = findViewById(R.id.browserButton);
 
         browserButton.setOnClickListener(view -> {
             Intent i = new Intent();

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SimpleTunes</string>
+    <string name="playFile">Play file</string>
+    <string name="playFolder">Play folder</string>
+    <string name="playPause">Play or pause</string>
+    <string name="skipNext">Skip to next</string>
+    <string name="skipPrev">Skip to previous</string>
+    <string name="shuffle">Toggle shuffle mode</string>
+    <string name="repeat">Toggle repeat mode</string>
+
 </resources>
