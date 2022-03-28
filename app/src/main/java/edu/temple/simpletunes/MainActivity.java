@@ -25,13 +25,9 @@ import java.io.IOException;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private ImageButton storage;
-
     private final String TAG = "MainActivity";
     private static MediaPlayer player;
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
-
-
     private static final int REQUEST_MP3 = 23;
     private static final int STORAGE_PERMISSION_CODE = 101;
     @Override
@@ -50,76 +46,49 @@ public class MainActivity extends AppCompatActivity {
                     mediaPlayerPlay(audioFile);
                 }
             }
-
         });
-
-
-        storage = findViewById(R.id.browserButton);
-
-        // Set Buttons on Click Listeners
-        storage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE);
-            }
-        });
-
-
     }
 
-    public void checkPermission(String permission, int requestCode)
-    {
+    public boolean checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
-
             // Requesting the permission
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { permission }, requestCode);
-        }
-        else {
-            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+            return false;
+        }else{
+            Log.d(TAG, "checkPermission: permission granted");
+            return true;
         }
     }
 
-
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode,
-                permissions,
-                grantResults);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Storage Permission Denied", Toast.LENGTH_SHORT).show();
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("audio/mpeg");
+                mActivityResultLauncher.launch(i);
             }
         }
     }
-
-
-
-
-
-
-
 
     @Override
     protected void onResume() {
         ImageButton browserButton = findViewById(R.id.browserButton);
 
         browserButton.setOnClickListener(view -> {
-            Intent i = new Intent();
-            i.setAction(Intent.ACTION_OPEN_DOCUMENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            i.setType("audio/mpeg");
-            mActivityResultLauncher.launch(i);
+            if(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE)){
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("audio/mpeg");
+                mActivityResultLauncher.launch(i);
+            }
         });
         super.onResume();
     }
-
 
     /**
      * The mediaPlayerPlay method is used to initialize the mediaPlayer
@@ -134,13 +103,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             player.reset();   // Reset to change data source.
         }
-
-        player.setAudioAttributes(
-                new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .build()
-        );
+        player.setAudioAttributes(new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .build());
         try {
             player.setDataSource(getApplicationContext(), myUri);
         } catch (IOException e) {
@@ -149,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         player.prepareAsync();
         player.setOnPreparedListener(MediaPlayer::start);
     }
-
 
     @Override
     protected void onDestroy() {
