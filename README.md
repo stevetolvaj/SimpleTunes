@@ -29,7 +29,11 @@ For Running on Android Studio:
 - The app will now be installed in your device apps 
 
 - The app will now run when selected and show the following screen:
-![This is a screenshot.](image.jpg)
+
+
+![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
+
+
 
 # How to contribute
 Follow this project board to know the latest status of the project: https://github.com/cis3296s22/SimpleTunes/projects/1
