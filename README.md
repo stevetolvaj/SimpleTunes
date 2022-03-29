@@ -5,8 +5,11 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 
 # How to run
+## Disclaimer: Android studio has a lot of issues in which sometimes your emulator(fake phone) might just randomly quit
+## Please be patient and try again!
 
-For Android Devices and Emulated Android Devices:
+
+## For Android Devices and Emulated Android Devices:
 
 - Download the apk file found at this link: https://github.com/cis3296s22/SimpleTunes/raw/main/app-debug.apk
 
@@ -16,7 +19,10 @@ For Android Devices and Emulated Android Devices:
 
 - The app will now run when selected
 
-For Running on Android Studio: 
+-![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
+-Click the button shown above
+
+## For Running on Android Studio: 
 
 -Download the latest version of Android Studio: https://developer.android.com/studio/?gclid=Cj0KCQjw5-WRBhCKARIsAAId9FnNsgtxKZxxRB4C50f-VUj4B6p3EitP48TIwFI0db2dmWF_nqooFJYaAjwtEALw_wcB&gclsrc=aw.ds
 
@@ -33,6 +39,17 @@ For Running on Android Studio:
 
 ![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
 
+
+- After clicking the button shown above you will be prompted to agree to an external storage permission. Please agree to the permission
+
+
+![selectdownloads](https://user-images.githubusercontent.com/89646919/160629499-ba63b6eb-7ea2-4f3d-8f98-a8814b2114e8.PNG)
+
+- Then you will be shown the page above. Click the three lines on the top left and then select downloads
+
+- Select one of the songs you downloaded and enjoy!
+
+-To listen to a different downloaded mp3 file or repeat the song just click on the song button at the top left once again!
 
 
 # How to contribute
