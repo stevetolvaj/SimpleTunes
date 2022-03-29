@@ -13,6 +13,17 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 - Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.2.0. Then download the apk file
 
+- Open the Settings app and search for the word "unknown".
+- ![image](https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png)
+- Select that and then select the item that that brings you to.
+- ![image](https://user-images.githubusercontent.com/58083363/160680681-0652ebe0-d2a4-45fc-ab8b-9f4bc7b8c470.png)
+- This will bring you to the following screen
+- ![image](https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png)
+- Select Chrome, then toggle "Allow from this source"
+- ![image](https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.png)
+
+
+
 - Find the downloaded file in your file system, select the file and choose install. You may have to enable installing apps from unknown sources, see https://www.verizon.com/support/knowledge-base-222186/ for details.
 
 - The app will now be installed in your device apps 
