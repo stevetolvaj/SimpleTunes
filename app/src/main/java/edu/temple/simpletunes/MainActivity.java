@@ -8,21 +8,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.media.AudioAttributes;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-
-import java.io.IOException;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -30,10 +26,33 @@ public class MainActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private static final int REQUEST_MP3 = 23;
     private static final int STORAGE_PERMISSION_CODE = 101;
+
+
+    // Variables and initialization of MediaPlayerService service connection.
+    private boolean isConnected = false;
+    private MediaPlayerService.ControlsBinder mAudioControlsBinder;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            isConnected = true;
+            mAudioControlsBinder = (MediaPlayerService.ControlsBinder) service;
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isConnected = false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Bind the MediaPlayerService to the MainActivity.
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if(result.getResultCode() == RESULT_OK && result.getData() == null){
@@ -91,42 +110,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * The mediaPlayerPlay method is used to initialize the mediaPlayer
-     * play the Uri provided. Also checks if reset is needed to play new audio file.
-     * Plays asynchronously
+     * The mediaPlayerPlay method is used to start the MediaPlayerService and
+     * also play the associated Uri.
      * @param myUri The Uri to start playing.
      */
     private void mediaPlayerPlay(Uri myUri) {
-
-        if (player == null) {
-            player = new MediaPlayer();
-        } else {
-            player.reset();   // Reset to change data source.
-        }
-        player.setAudioAttributes(new AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .build());
-        try {
-            player.setDataSource(getApplicationContext(), myUri);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        player.prepareAsync();
-        player.setOnPreparedListener(MediaPlayer::start);
+        if (isConnected)
+            startService(new Intent(this, MediaPlayerService.class));
+        mAudioControlsBinder.play(myUri);
     }
 
     @Override
     protected void onDestroy() {
-        if (!isChangingConfigurations()) {
-            if (player != null) {
-                if (player.isPlaying()) {
-                    player.stop();
-                }
-                player.release();
-                player = null;
-            }
-        }
         super.onDestroy();
+        unbindService(mServiceConnection);
+        // Stop service when application is destroyed.
+        // stopService(new Intent(this, MediaPlayerService.class));
+
     }
 }
