@@ -24,15 +24,29 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 ## For Running on Android Studio: 
 
--Download the latest version of Android Studio: https://developer.android.com/studio/?gclid=Cj0KCQjw5-WRBhCKARIsAAId9FnNsgtxKZxxRB4C50f-VUj4B6p3EitP48TIwFI0db2dmWF_nqooFJYaAjwtEALw_wcB&gclsrc=aw.ds
+- Download the latest version of Android Studio: https://developer.android.com/studio/?gclid=Cj0KCQjw5-WRBhCKARIsAAId9FnNsgtxKZxxRB4C50f-VUj4B6p3EitP48TIwFI0db2dmWF_nqooFJYaAjwtEALw_wcB&gclsrc=aw.ds
 
-- Click the play button on the top right to open the emulator and then open an internet browser
+- After opening the application click new project and then empty activity
+
+- Give your application a name and then the package edu.temple.(the name)
+
+![Emulator](https://user-images.githubusercontent.com/89646919/160634154-f17f949f-eb3e-4328-9963-49fcfe5e2810.PNG)
+
+- After setting up and getting into the actual android studio, go to the top right and click on the device manager as shown above
+
+- You should now click create device. Then you will be prompted with a list of devices. Click the pixel 2. After that select release name R, API 30. Finally the next screen should let you click finish. After that you will be shown the same screen where you clicked create device except now your pixel 3 will be listed. 
+
+![final](https://user-images.githubusercontent.com/89646919/160636150-3dbf4eb7-9ca8-4a51-9950-5b50ee87b550.PNG)
+
+- Make sure the top of your window matches the above picture. Then click device file explorer on the bottom right of your screen.
+
+- Click the small circle on the bottom of your phone and open an internet browser
 
 - Download the apk file found at this link: https://github.com/cis3296s22/SimpleTunes/raw/main/app-debug.apk through the android studio emulator
 
-- Find the downloaded file in your file system, select the file and choose install 
+- It might ask you to give google chrome permission to download unknown things. Please select yes/agree and download it again after.
 
-- The app will now be installed in your device apps 
+- Select run after the 
 
 - The app will now run when selected and show the following screen:
 
