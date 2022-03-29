@@ -51,8 +51,15 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 - The app will now run when selected and show the following screen:
 
 
+
+
+- Now please exit the app using the small circle at the bottom and load up google chrome.
+
+- Go to this link and download the mp3 file: http://teknoaxe.com/direct_download.php?file=Piccolo_and_a_Cane.mp3
+
 ![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
 
+- Now go back into the application and click on the button at the top left 
 
 - After clicking the button shown above you will be prompted to agree to an external storage permission. Please agree to the permission
 
