@@ -42,7 +42,7 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 - Click the small circle on the bottom of your phone and open an internet browser
 
-- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release 2.0. Then download the apk file
+- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.2.0. Then download the apk file
 
 - It might ask you to give google chrome permission to download unknown things. Please select yes/agree and download it again after.
 
