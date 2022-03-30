@@ -1,0 +1,25 @@
+title Playing a single file
+
+actor User
+participant ":MainActivity" as main
+participant Android OS
+participant ":MusicPlayerService" as player
+
+activate User
+User->>main:press open file button
+activate main
+main->>main:checkPermission()
+main->>Android OS:send implicit Intent
+activate Android OS
+main<<--Android OS:response: file URI
+deactivate Android OS
+main->>player:mediaPlayerPlay(Uri uri)
+activate player
+deactivate main
+player->>player:start()
+deactivate player
+deactivate User
+space 
+destroy main
+destroy Android OS
+destroy player
