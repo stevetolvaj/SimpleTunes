@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private static MediaPlayer player;
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
+    private ActivityResultLauncher<Intent> folderLauncher;
     private static final int REQUEST_MP3 = 23;
     private static final int STORAGE_PERMISSION_CODE = 101;
     @Override
@@ -44,6 +46,27 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
 
                     mediaPlayerPlay(audioFile);
+                }
+            }
+        });
+        folderLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if(result.getResultCode() == RESULT_OK && result.getData() == null){
+                Log.d(TAG, "onActivityResult: data was null");
+            }else{
+                if (result.getData() != null) {
+                    Uri uri = result.getData().getData();
+                    Log.d(TAG, "onActivityResult: got URI " + uri.toString());
+                    DocumentFile directory = DocumentFile.fromTreeUri(MainActivity.this, uri);
+                    if(directory == null){
+                        Log.d(TAG, "onActivityResult: got empty directory");
+                    }else{
+                        DocumentFile contents[] = directory.listFiles();
+                        for(DocumentFile df : contents){
+                            Uri u = df.getUri();
+                            Log.d(TAG, "onActivityResult: sending URI to player: " + u.toString());
+                            mediaPlayerPlay(u);
+                        }
+                    }
                 }
             }
         });
@@ -77,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         ImageButton browserButton = findViewById(R.id.browserButton);
-
         browserButton.setOnClickListener(view -> {
             if(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE)){
                 Intent i = new Intent();
@@ -85,6 +107,19 @@ public class MainActivity extends AppCompatActivity {
                 i.addCategory(Intent.CATEGORY_OPENABLE);
                 i.setType("audio/mpeg");
                 mActivityResultLauncher.launch(i);
+            }
+        });
+        ImageButton folderButton = findViewById(R.id.libraryButton);
+        folderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // https://www.programcreek.com/java-api-examples/?class=android.content.Intent&method=ACTION_OPEN_DOCUMENT_TREE
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+                        | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+                folderLauncher.launch(i);
             }
         });
         super.onResume();
