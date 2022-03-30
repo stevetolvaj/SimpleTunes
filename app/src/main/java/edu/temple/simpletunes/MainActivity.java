@@ -18,13 +18,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private ActivityResultLauncher<Intent> folderLauncher;
-    private static final int REQUEST_MP3 = 23;
     private static final int STORAGE_PERMISSION_CODE = 101;
 
 
@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
                     if(directory == null){
                         Log.d(TAG, "onActivityResult: got empty directory");
                     }else{
-                        DocumentFile contents[] = directory.listFiles();
+                        DocumentFile[] contents = directory.listFiles();
                         for(DocumentFile df : contents){
                             Uri u = df.getUri();
-                            Log.d(TAG, "onActivityResult: sending URI to player: " + u.toString());
+                            Log.d(TAG, "onActivityResult: sending URI to player: " + u);
                             mediaPlayerPlay(u);
                         }
                     }
