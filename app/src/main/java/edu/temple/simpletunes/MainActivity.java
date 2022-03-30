@@ -12,7 +12,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,21 +21,21 @@ import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
-    private static MediaPlayer player;
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
-    private static final int REQUEST_MP3 = 23;
     private static final int STORAGE_PERMISSION_CODE = 101;
 
 
     // Variables and initialization of MediaPlayerService service connection.
+    // TODO: use functions available through mAudioControlsBinder to control media.
+    // mMediaControlsBinder.play, pause, resume, stop, isPlaying.
+    // resume and pause does not check if track is playing or already paused.
     private boolean isConnected = false;
     private MediaPlayerService.ControlsBinder mAudioControlsBinder;
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             isConnected = true;
             mAudioControlsBinder = (MediaPlayerService.ControlsBinder) service;
-
         }
 
         @Override
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
      * @param myUri The Uri to start playing.
      */
     private void mediaPlayerPlay(Uri myUri) {
-        if (isConnected)
+        if (isConnected) // Start service if first time playing a track.
             startService(new Intent(this, MediaPlayerService.class));
         mAudioControlsBinder.play(myUri);
     }
@@ -124,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
-        // Stop service when application is destroyed.
-        // stopService(new Intent(this, MediaPlayerService.class));
-
+        if (!isChangingConfigurations())
+            stopService(new Intent(this, MediaPlayerService.class));
     }
 }
