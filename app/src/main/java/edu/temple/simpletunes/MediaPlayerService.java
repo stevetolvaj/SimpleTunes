@@ -9,8 +9,11 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.documentfile.provider.DocumentFile;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * MediaPlayerService is a service created to run the MediaPlayer instance in the background
@@ -20,11 +23,34 @@ import java.io.IOException;
 public class MediaPlayerService extends Service {
 
     private final ControlsBinder mControlsBinder = new ControlsBinder();
-    private MediaPlayer mMediaPlayer = null;
+    private final MediaPlayer mMediaPlayer = new MediaPlayer();
     private final static String TAG = "MEDIAPLAYERSERVICE";
-    private int mCurrentPosition;
+    private int mCurrentPosition;   // The current position of the paused track
+    private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
+    private DocumentFile[] mFolder; // The folder that should be played
+    private int mNextFolderIndex = 0;   // The index of the next song to be played in folder
 
     public MediaPlayerService() {
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // OnCompletionListener used to play next track in order if mIsPlayingFolder set to true
+        // Plays until last file is completed then resets variables.
+        mMediaPlayer.setOnCompletionListener(mp -> {
+            if(mIsPlayingFolder && mNextFolderIndex < mFolder.length) {
+                play(mFolder[mNextFolderIndex].getUri());
+                Log.d(TAG, "onCompleteListener: Playing track at index " + mNextFolderIndex + " of folder");
+                mNextFolderIndex++;
+            } else {
+                // Set is playing folder back to false after last file is played.
+                Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
+                mIsPlayingFolder = false;
+                mNextFolderIndex = 0;
+            }
+        });
     }
 
     @Override
@@ -41,11 +67,7 @@ public class MediaPlayerService extends Service {
      * @param uri The Uri of the audio file.
      */
     private void play(Uri uri) {
-        if (mMediaPlayer == null) {
-            mMediaPlayer = new MediaPlayer();
-        } else {
-            mMediaPlayer.reset();   // Reset to change data source.
-        }
+        mMediaPlayer.reset();   // Reset to change data source.
 
         mMediaPlayer.setAudioAttributes(
                 new AudioAttributes.Builder()
@@ -72,6 +94,20 @@ public class MediaPlayerService extends Service {
      */
     private void play(File file) {
         play(Uri.fromFile(file));
+    }
+
+    /**
+     * The playFolder method will play the DocumentFile array one by one when each track is
+     * completed using onCompletionListener in onCreate().
+     *
+     * @param folder The Uri of the audio file.
+     */
+    private void playFolder(DocumentFile[] folder) {
+        mIsPlayingFolder = true;
+        mNextFolderIndex = 1;
+        mFolder = folder;
+        play(folder[0].getUri());
+
     }
 
     /**
@@ -127,6 +163,8 @@ public class MediaPlayerService extends Service {
         }
         
         public void resume() { MediaPlayerService.this.resume();}
+
+        public void playFolder (DocumentFile[] folder){ MediaPlayerService.this.playFolder(folder);}
     }
 
 
@@ -134,13 +172,11 @@ public class MediaPlayerService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        if (mMediaPlayer != null) {
             if(mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
             }
             mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
+
         Log.d(TAG, "onDestroy: MediaPlayerService");
     }
 }

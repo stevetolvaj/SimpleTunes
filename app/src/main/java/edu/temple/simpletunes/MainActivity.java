@@ -80,11 +80,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onActivityResult: got empty directory");
                     }else{
                         DocumentFile[] contents = directory.listFiles();
-                        for(DocumentFile df : contents){
-                            Uri u = df.getUri();
-                            Log.d(TAG, "onActivityResult: sending URI to player: " + u);
-                            mediaPlayerPlay(u);
-                        }
+                        Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
+                        mediaPlayerPlayFolder(contents);
                     }
                 }
             }
@@ -153,6 +150,17 @@ public class MainActivity extends AppCompatActivity {
         if (isConnected) // Start service if first time playing a track.
             startService(new Intent(this, MediaPlayerService.class));
         mAudioControlsBinder.play(myUri);
+    }
+
+    /**
+     * The mediaPlayerPlayFolder plays the entire folder found in a DocumentFile array. Stops after
+     * last file is completed playing.
+     * @param folder The DocumentFile array to play all audio files from.
+     */
+    private void mediaPlayerPlayFolder(DocumentFile[] folder) {
+        if (isConnected)
+            startService(new Intent(this, MediaPlayerService.class));
+        mAudioControlsBinder.playFolder(folder);
     }
 
     @Override
