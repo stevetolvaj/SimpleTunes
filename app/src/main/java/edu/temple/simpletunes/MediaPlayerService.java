@@ -25,7 +25,6 @@ public class MediaPlayerService extends Service {
     private final ControlsBinder mControlsBinder = new ControlsBinder();
     private final MediaPlayer mMediaPlayer = new MediaPlayer();
     private final static String TAG = "MEDIAPLAYERSERVICE";
-    private int mCurrentPosition;   // The current position of the paused track
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
     private DocumentFile[] mFolder; // The folder that should be played
     private int mNextFolderIndex = 0;   // The index of the next song to be played in folder
@@ -116,14 +115,13 @@ public class MediaPlayerService extends Service {
      */
     private void pause() {
         mMediaPlayer.pause();
-        mCurrentPosition = mMediaPlayer.getCurrentPosition();
     }
 
     /**
-     * The resume method seeks to the current position of audio file and starts playing.
+     * The resume method seeks to the current position of audio file and starts playing
+     * after pause is called.
      */
     private void resume() {
-        mMediaPlayer.seekTo(mCurrentPosition);
         mMediaPlayer.start();
     }
 
