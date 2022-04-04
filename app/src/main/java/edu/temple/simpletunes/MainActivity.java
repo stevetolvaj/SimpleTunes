@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> folderLauncher;
     private static final int REQUEST_MP3 = 23;
     private static final int STORAGE_PERMISSION_CODE = 101;
+    public boolean stopped=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +124,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         super.onResume();
+        ImageButton playPauseButton = findViewById(R.id.playPauseButton);
+        playPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(player.isPlaying()){
+                    player.stop();
+                    stopped = true;
+                }else if(stopped = true){
+                    player.start();
+                }
+            }
+        });
     }
 
     /**
