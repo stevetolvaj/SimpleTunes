@@ -138,7 +138,30 @@ public class MainActivity extends AppCompatActivity {
                 folderLauncher.launch(i);
             }
         });
+
+        ImageButton playPauseButton = findViewById(R.id.playPauseButton);
+        playPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               mediaPlayerPauseOrStart();
+            }
+        });
+
         super.onResume();
+    }
+
+    /**
+     * The mediaPlayerPauseOrStart method is used to pause the current track or start from the
+     * paused position. Checks if service is bound first.
+     */
+    private void mediaPlayerPauseOrStart() {
+        if (isConnected) {
+            if (mAudioControlsBinder.isPlaying()){
+                mAudioControlsBinder.pause();
+            } else if(!mAudioControlsBinder.isPlaying()){
+                mAudioControlsBinder.resume();
+            }
+        }
     }
 
     /**
