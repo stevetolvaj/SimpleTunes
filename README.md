@@ -11,7 +11,7 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 ## For Android Devices and Emulated Android Devices:
 
-- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.2.0. Then download the apk file
+- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.3.0. Then download the apk file
 
 - Open the Settings app and search for the word "unknown".
 - ![image](https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png)
@@ -21,10 +21,6 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 - ![image](https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png)
 - Select Chrome, then toggle "Allow from this source"
 - ![image](https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.png)
-
-
-
-- Find the downloaded file in your file system, select the file and choose install. You may have to enable installing apps from unknown sources, see https://www.verizon.com/support/knowledge-base-222186/ for details.
 
 - The app will now be installed in your device apps 
 
@@ -53,16 +49,9 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 - Click the small circle on the bottom of your phone and open an internet browser
 
-- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.2.0. Then download the apk file
+- At this point, please follow the instructions in the section labeled "For Android Devices and Emulated Android Devices:"
 
-- Select run after the 
-
-- The app will now run when selected and show the following screen:
-
-
-
-
-- Now please exit the app using the small circle at the bottom and load up google chrome.
+- After following those instructions, please exit the app using the small circle at the bottom and load up google chrome.
 
 - Go to this link and download the mp3 file: http://teknoaxe.com/direct_download.php?file=Piccolo_and_a_Cane.mp3
 
@@ -78,6 +67,16 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 - Then you will be shown the page above. Click the three lines on the top left and then select downloads
 
 - Select one of the songs you downloaded and enjoy!
+
+## New features:
+
+-Now after selecting the song you wanted to listen to, you can choose to pause/play the song by click the pause/play button in the bottom middle of your screen.
+
+-Select a folder to play by clicking on the button at the top of the screen that shows the multiple files icon
+
+-Use the previous and next buttons to navigate through tracks that are being played from a folder.
+
+-Changing UI coming soon!
 
 -To listen to a different downloaded mp3 file or repeat the song just click on the song button at the top left once again!
 
