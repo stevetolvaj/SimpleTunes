@@ -79,9 +79,13 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 
 - Select one of the songs you downloaded and enjoy!
 
-## New feature:
+## New features:
 
 -Now after selecting the song you wanted to listen to, you can choose to pause/play the song by click the pause/play button in the bottom middle of your screen.
+
+-Select a folder to play by clicking on the button at the top of the screen that shows the multiple files icon
+
+-Use the previous and next buttons to navigate through tracks that are being played from a folder.
 
 -Changing UI coming soon!
 
