@@ -20,6 +20,3 @@ player->>player:start()
 deactivate player
 deactivate User
 space 
-destroy main
-destroy Android OS
-destroy player
