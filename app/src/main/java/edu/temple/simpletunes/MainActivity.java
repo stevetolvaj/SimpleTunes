@@ -146,8 +146,39 @@ public class MainActivity extends AppCompatActivity {
                mediaPlayerPauseOrStart();
             }
         });
+        ImageButton skipNextButton = findViewById(R.id.skipNextButton);
+        skipNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaPlayerNext();
+            }
+        });
 
+        ImageButton skipPrevButton = findViewById(R.id.skipPrevButton);
+        skipPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaPlayerPrev();
+            }
+        });
         super.onResume();
+    }
+
+    /**
+     * The mediaPlayerPrev method is used to skip to the previously played track in the file.
+     */
+    private void mediaPlayerPrev() {
+        if (isConnected) {
+            mAudioControlsBinder.playPrev();
+        }
+    }
+    /**
+     * The mediaPlayerNext method is used to skip to the next track in the file.
+     */
+    private void mediaPlayerNext() {
+        if (isConnected) {
+            mAudioControlsBinder.playNext();
+        }
     }
 
     /**
