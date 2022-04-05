@@ -8,12 +8,11 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * MediaPlayerService is a service created to run the MediaPlayer instance in the background
@@ -27,7 +26,7 @@ public class MediaPlayerService extends Service {
     private final static String TAG = "MEDIAPLAYERSERVICE";
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
     private DocumentFile[] mFolder; // The folder that should be played
-    private int mNextFolderIndex = 0;   // The index of the next song to be played in folder
+    private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
 
     public MediaPlayerService() {
     }
@@ -39,15 +38,17 @@ public class MediaPlayerService extends Service {
         // OnCompletionListener used to play next track in order if mIsPlayingFolder set to true
         // Plays until last file is completed then resets variables.
         mMediaPlayer.setOnCompletionListener(mp -> {
-            if(mIsPlayingFolder && mNextFolderIndex < mFolder.length) {
-                play(mFolder[mNextFolderIndex].getUri());
-                Log.d(TAG, "onCompleteListener: Playing track at index " + mNextFolderIndex + " of folder");
-                mNextFolderIndex++;
+
+            if(mIsPlayingFolder && mCurrentFolderIndex < mFolder.length - 1) {
+                mCurrentFolderIndex++;
+                Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of folder");
+                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
             } else {
                 // Set is playing folder back to false after last file is played.
-                Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
+                if (mIsPlayingFolder)
+                    Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
                 mIsPlayingFolder = false;
-                mNextFolderIndex = 0;
+                mCurrentFolderIndex = 0;
             }
         });
     }
@@ -65,7 +66,7 @@ public class MediaPlayerService extends Service {
      *
      * @param uri The Uri of the audio file.
      */
-    private void play(Uri uri) {
+    private void playSingleTrack(Uri uri) {
         mMediaPlayer.reset();   // Reset to change data source.
 
         mMediaPlayer.setAudioAttributes(
@@ -85,14 +86,15 @@ public class MediaPlayerService extends Service {
     }
 
     /**
-     * The play method will play the Uri passed in if it contains music content. It also
-     * initialized the MediaPlayer instance, prepares to run asynchronously, and waits until it
-     * is prepared to play the Uri.
+     * The play method will play the Uri passed in if it contains music content. It also resets
+     * the variables for playing a folder to prevent it.
      *
-     * @param file The Uri of the audio file.
+     * @param uri The Uri of the audio file.
      */
-    private void play(File file) {
-        play(Uri.fromFile(file));
+    private void play(Uri uri) {
+        mIsPlayingFolder = false;
+        mCurrentFolderIndex = 0;
+        playSingleTrack(uri);
     }
 
     /**
@@ -103,9 +105,8 @@ public class MediaPlayerService extends Service {
      */
     private void playFolder(DocumentFile[] folder) {
         mIsPlayingFolder = true;
-        mNextFolderIndex = 1;
         mFolder = folder;
-        play(folder[0].getUri());
+        playSingleTrack(folder[0].getUri());
 
     }
 
@@ -141,6 +142,42 @@ public class MediaPlayerService extends Service {
     }
 
     /**
+     * The playNext method checks if a track is being played from a folder. It then plays the
+     * next song if any other are found in the folder.
+     */
+    public void playNext() {
+        if(mIsPlayingFolder) {
+            if(mCurrentFolderIndex < mFolder.length - 1) {
+                mCurrentFolderIndex++;
+                Log.d(TAG, "playNext: Next track playing at index " + mCurrentFolderIndex);
+                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            } else {
+                Toast.makeText(getApplicationContext(), "End of folder reached", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Not playing a folder", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * The playPrev method checks if a track is being played from a folder. It then plays the
+     * previous song if any other are found in the folder.
+     */
+    public void playPrev() {
+        if(mIsPlayingFolder) {
+            if(mCurrentFolderIndex > 0) {
+                mCurrentFolderIndex--;
+                Log.d(TAG, "playPrev: Prev track playing at index " + mCurrentFolderIndex);
+                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            } else {
+                Toast.makeText(getApplicationContext(), "Start of folder reached", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Not playing a folder", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
      * Class to control media player instance.
      */
     public class ControlsBinder extends Binder {
@@ -163,6 +200,10 @@ public class MediaPlayerService extends Service {
         public void resume() { MediaPlayerService.this.resume();}
 
         public void playFolder (DocumentFile[] folder){ MediaPlayerService.this.playFolder(folder);}
+
+        public void playNext(){ MediaPlayerService.this.playNext();}
+
+        public void playPrev(){ MediaPlayerService.this.playPrev();}
     }
 
 
