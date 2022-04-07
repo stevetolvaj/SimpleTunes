@@ -9,17 +9,23 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -212,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
      * @param folder The DocumentFile array to play all audio files from.
      */
     private void mediaPlayerPlayFolder(DocumentFile[] folder) {
+        Arrays.sort(folder, new DocumentFileComparator());
         if (isConnected)
             startService(new Intent(this, MediaPlayerService.class));
         mAudioControlsBinder.playFolder(folder);
