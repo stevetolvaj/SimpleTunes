@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void mediaPlayerPlay(Uri myUri) {
         if (isConnected) // Start service if first time playing a track.
-            startService(new Intent(this, MediaPlayerService.class));
+            startForegroundService(new Intent(this, MediaPlayerService.class));
         mAudioControlsBinder.play(myUri);
     }
 
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     private void mediaPlayerPlayFolder(DocumentFile[] folder) {
         Arrays.sort(folder, new DocumentFileComparator());
         if (isConnected)
-            startService(new Intent(this, MediaPlayerService.class));
+            startForegroundService(new Intent(this, MediaPlayerService.class));
         mAudioControlsBinder.playFolder(folder);
     }
 
