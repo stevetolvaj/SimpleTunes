@@ -1,5 +1,11 @@
 package edu.temple.simpletunes;
 
+import static edu.temple.simpletunes.AppNotificationChannel.CHANNEL_ID;
+import static edu.temple.simpletunes.MainActivity.TRACK_FILE_NAME;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioAttributes;
@@ -10,6 +16,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.IOException;
@@ -24,9 +31,12 @@ public class MediaPlayerService extends Service {
     private final ControlsBinder mControlsBinder = new ControlsBinder();
     private final MediaPlayer mMediaPlayer = new MediaPlayer();
     private final static String TAG = "MEDIAPLAYERSERVICE";
+    public static final int NOTIFICATION_ID = 1;
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
     private DocumentFile[] mFolder; // The folder that should be played
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
+    NotificationManager mNotificationManager;
+
     private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
     private Uri currentTrack;
     public MediaPlayerService() {
@@ -36,6 +46,8 @@ public class MediaPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        mNotificationManager = getSystemService(NotificationManager.class);
+
         // OnCompletionListener used to play next track in order if mIsPlayingFolder set to true
         // Plays until last file is completed then resets variables.
         mMediaPlayer.setOnCompletionListener(mp -> {
@@ -44,6 +56,8 @@ public class MediaPlayerService extends Service {
                 mCurrentFolderIndex++;
                 Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of folder");
                 playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                // Update notification with filename
+                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
             } else {
                 mCurrentFolderIndex = 0;
                 // Set is playing folder back to false after last file is played.
@@ -61,6 +75,33 @@ public class MediaPlayerService extends Service {
                 }
             }
         });
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(NOTIFICATION_ID, getNotification(intent.getStringExtra(TRACK_FILE_NAME)));
+
+        return START_NOT_STICKY;
+    }
+
+    /**
+     * The getNotification method creates a Notification object using the builder and
+     * a pending intent attached to the notification.
+     * @param description The track name or description to display
+     * @return The Notification object
+     */
+    public Notification getNotification(String description) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentText("Current track: " + description)
+                .setSmallIcon(R.drawable.ic_service)
+                .setContentIntent(pendingIntent)
+                .setOnlyAlertOnce(true)
+                .build();
+
     }
 
     @Override
@@ -162,6 +203,8 @@ public class MediaPlayerService extends Service {
                 mCurrentFolderIndex++;
                 Log.d(TAG, "playNext: Next track playing at index " + mCurrentFolderIndex);
                 playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                // Update notification
+                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
             } else {
                 Toast.makeText(getApplicationContext(), "End of folder reached", Toast.LENGTH_LONG).show();
             }
@@ -180,6 +223,8 @@ public class MediaPlayerService extends Service {
                 mCurrentFolderIndex--;
                 Log.d(TAG, "playPrev: Prev track playing at index " + mCurrentFolderIndex);
                 playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                // Update notification
+                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
             } else {
                 Toast.makeText(getApplicationContext(), "Start of folder reached", Toast.LENGTH_LONG).show();
             }
