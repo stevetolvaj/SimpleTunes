@@ -31,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private ActivityResultLauncher<Intent> folderLauncher;
+    public static final String TRACK_FILE_NAME = "trackFileName";
     private static final int STORAGE_PERMISSION_CODE = 101;
-
+    private Intent mServiceIntent;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -59,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Bind the MediaPlayerService to the MainActivity.
-        Intent intent = new Intent(this, MediaPlayerService.class);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        mServiceIntent = new Intent(this, MediaPlayerService.class);
+        bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if(result.getResultCode() == RESULT_OK && result.getData() == null){
@@ -207,8 +208,11 @@ public class MainActivity extends AppCompatActivity {
      * @param myUri The Uri to start playing.
      */
     private void mediaPlayerPlay(Uri myUri) {
+        String path = myUri.getPath();
         if (isConnected) // Start service if first time playing a track.
-            startForegroundService(new Intent(this, MediaPlayerService.class));
+            // Send file name through intent to service for first notification.
+            mServiceIntent.putExtra(TRACK_FILE_NAME, path.substring(path.lastIndexOf("/")+1));
+            startForegroundService(new Intent(mServiceIntent));
         mAudioControlsBinder.play(myUri);
     }
 
@@ -219,8 +223,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void mediaPlayerPlayFolder(DocumentFile[] folder) {
         Arrays.sort(folder, new DocumentFileComparator());
+        String name = folder[0].getName();
         if (isConnected)
-            startForegroundService(new Intent(this, MediaPlayerService.class));
+            // Send file name through intent to service for first notification.
+            mServiceIntent.putExtra(TRACK_FILE_NAME, name);
+            startForegroundService(mServiceIntent);
         mAudioControlsBinder.playFolder(folder);
     }
 
