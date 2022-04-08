@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         if (isConnected) // Start service if first time playing a track.
             // Send file name through intent to service for first notification.
             mServiceIntent.putExtra(TRACK_FILE_NAME, path.substring(path.lastIndexOf("/")+1));
-            startForegroundService(new Intent(mServiceIntent));
+            startForegroundService(mServiceIntent);
         mAudioControlsBinder.play(myUri);
     }
 
