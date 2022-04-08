@@ -28,6 +28,7 @@ public class MediaPlayerService extends Service {
     private DocumentFile[] mFolder; // The folder that should be played
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
     private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
+    private Uri currentTrack;
     public MediaPlayerService() {
     }
 
@@ -54,6 +55,9 @@ public class MediaPlayerService extends Service {
                     }else{
                         mIsPlayingFolder = false;
                     }
+                }
+                if(repeatStatus == 2){
+                    playSingleTrack(currentTrack);
                 }
             }
         });
@@ -83,6 +87,7 @@ public class MediaPlayerService extends Service {
         );
         try {
             mMediaPlayer.setDataSource(getApplicationContext(), uri);
+            currentTrack = uri;
         } catch (IOException e) {
             Log.d(TAG, "play: Could not play with current data source");
             e.printStackTrace();
