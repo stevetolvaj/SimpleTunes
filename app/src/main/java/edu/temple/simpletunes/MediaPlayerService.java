@@ -73,6 +73,12 @@ public class MediaPlayerService extends Service {
         return START_NOT_STICKY;
     }
 
+    /**
+     * The getNotification method creates a Notification object using the builder and
+     * a pending intent attached to the notification.
+     * @param description The track name or description to display
+     * @return The Notification object 
+     */
     public Notification getNotification(String description) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
