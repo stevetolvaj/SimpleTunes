@@ -167,6 +167,26 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayerPrev();
             }
         });
+        ImageButton repeatButton = findViewById(R.id.repeatButton);
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int status = mediaPlayerRepeat();
+                switch (status){
+                    case 0:
+                        repeatButton.setImageResource(R.drawable.ic_baseline_repeat_48);
+                        break;
+                    case 1:
+                        repeatButton.setImageResource(R.drawable.ic_baseline_repeat_on_48);
+                        break;
+                    case 2:
+                        repeatButton.setImageResource(R.drawable.ic_baseline_repeat_one_48);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         super.onResume();
     }
 
@@ -223,7 +243,13 @@ public class MainActivity extends AppCompatActivity {
             startService(new Intent(this, MediaPlayerService.class));
         mAudioControlsBinder.playFolder(folder);
     }
-
+    private int mediaPlayerRepeat(){
+        if(isConnected){
+            return mAudioControlsBinder.repeat();
+        }else{
+            return 0;
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

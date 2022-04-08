@@ -27,7 +27,7 @@ public class MediaPlayerService extends Service {
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
     private DocumentFile[] mFolder; // The folder that should be played
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
-
+    private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
     public MediaPlayerService() {
     }
 
@@ -44,11 +44,17 @@ public class MediaPlayerService extends Service {
                 Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of folder");
                 playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
             } else {
-                // Set is playing folder back to false after last file is played.
-                if (mIsPlayingFolder)
-                    Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
-                mIsPlayingFolder = false;
                 mCurrentFolderIndex = 0;
+                // Set is playing folder back to false after last file is played.
+                if (mIsPlayingFolder) {
+                    Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
+                    if(repeatStatus == 1){
+                        Log.d(TAG, "onCompleteListener: restarting from beginning of folder ");
+                        playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                    }else{
+                        mIsPlayingFolder = false;
+                    }
+                }
             }
         });
     }
@@ -176,7 +182,27 @@ public class MediaPlayerService extends Service {
             Toast.makeText(getApplicationContext(), "Not playing a folder", Toast.LENGTH_LONG).show();
         }
     }
-
+    public int repeat(){
+        switch (repeatStatus){
+            case 0:
+                if(mIsPlayingFolder){
+                    repeatStatus = 1;
+                }else{
+                    repeatStatus = 2;
+                }
+                break;
+            case 1:
+                repeatStatus = 2;
+                break;
+            case 2:
+                repeatStatus = 0;
+                break;
+            default:
+                Log.e(TAG, "repeat: illegal repeat status: " + repeatStatus);
+                break;
+        }
+        return repeatStatus;
+    }
     /**
      * Class to control media player instance.
      */
@@ -204,6 +230,9 @@ public class MediaPlayerService extends Service {
         public void playNext(){ MediaPlayerService.this.playNext();}
 
         public void playPrev(){ MediaPlayerService.this.playPrev();}
+        public int repeat(){
+            return MediaPlayerService.this.repeat();
+        }
     }
 
 
