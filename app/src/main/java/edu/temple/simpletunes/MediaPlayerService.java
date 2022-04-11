@@ -322,6 +322,10 @@ public class MediaPlayerService extends Service {
         public boolean shuffle(){
             return MediaPlayerService.this.shuffle();
         }
+
+        public MediaPlayerService getService() {
+            return MediaPlayerService.this;
+        }
     }
 
 
