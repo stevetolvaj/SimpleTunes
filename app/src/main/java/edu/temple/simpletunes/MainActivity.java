@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
 
                     mediaPlayerPlay(audioFile);
+                    ImageButton playPauseButton = findViewById(R.id.playPauseButton);
+                    playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
                 }
             }
         });
@@ -89,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                         DocumentFile[] contents = directory.listFiles();
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
                         mediaPlayerPlayFolder(contents);
+                        ImageButton playPauseButton = findViewById(R.id.playPauseButton);
+                        playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
                     }
                 }
             }
@@ -226,10 +230,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private void mediaPlayerPauseOrStart() {
         if (isConnected) {
+            ImageButton playPauseButton = findViewById(R.id.playPauseButton);
             if (mAudioControlsBinder.isPlaying()){
                 mAudioControlsBinder.pause();
+                playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72);
             } else if(!mAudioControlsBinder.isPlaying()){
                 mAudioControlsBinder.resume();
+                playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
             }
         }
     }
