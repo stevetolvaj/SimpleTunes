@@ -40,7 +40,7 @@ public class MediaPlayerService extends Service {
     private DocumentFile[] mFolder; // The folder that should be played
     private DocumentFile[] shuffledFolder;
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
-    NotificationManager mNotificationManager;
+    private NotificationManager mNotificationManager;
     private boolean shuffleOn = false;
     private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
     private Uri currentTrack;
