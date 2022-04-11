@@ -20,6 +20,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * MediaPlayerService is a service created to run the MediaPlayer instance in the background
@@ -34,9 +38,10 @@ public class MediaPlayerService extends Service {
     public static final int NOTIFICATION_ID = 1;
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
     private DocumentFile[] mFolder; // The folder that should be played
+    private DocumentFile[] shuffledFolder;
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
     NotificationManager mNotificationManager;
-
+    private boolean shuffleOn = false;
     private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
     private Uri currentTrack;
     public MediaPlayerService() {
@@ -51,27 +56,45 @@ public class MediaPlayerService extends Service {
         // OnCompletionListener used to play next track in order if mIsPlayingFolder set to true
         // Plays until last file is completed then resets variables.
         mMediaPlayer.setOnCompletionListener(mp -> {
-
-            if(mIsPlayingFolder && mCurrentFolderIndex < mFolder.length - 1) {
-                mCurrentFolderIndex++;
-                Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of folder");
-                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                // Update notification with filename
-                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
-            } else {
-                mCurrentFolderIndex = 0;
-                // Set is playing folder back to false after last file is played.
-                if (mIsPlayingFolder) {
-                    Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
-                    if(repeatStatus == 1){
-                        Log.d(TAG, "onCompleteListener: restarting from beginning of folder ");
-                        playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                    }else{
+            if(mIsPlayingFolder && shuffleOn){
+                if (mCurrentFolderIndex < mFolder.length - 1) {
+                    mCurrentFolderIndex++;
+                    Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of shuffled folder");
+                    playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+                    // Update notification with filename
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(shuffledFolder[mCurrentFolderIndex].getName()));
+                }else {
+                    mCurrentFolderIndex = 0;
+                    // Set is playing folder back to false after last file is played.
+                    if (repeatStatus == 1) {
+                        Log.d(TAG, "onCompleteListener: restarting from beginning of shuffled folder ");
+                        playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+                    } else {
                         mIsPlayingFolder = false;
                     }
                 }
-                if(repeatStatus == 2){
-                    playSingleTrack(currentTrack);
+            }else{
+                if (mIsPlayingFolder && mCurrentFolderIndex < mFolder.length - 1) {
+                    mCurrentFolderIndex++;
+                    Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of folder");
+                    playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                    // Update notification with filename
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                } else {
+                    mCurrentFolderIndex = 0;
+                    // Set is playing folder back to false after last file is played.
+                    if (mIsPlayingFolder) {
+                        Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
+                        if (repeatStatus == 1) {
+                            Log.d(TAG, "onCompleteListener: restarting from beginning of folder ");
+                            playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                        } else {
+                            mIsPlayingFolder = false;
+                        }
+                    }
+                    if (repeatStatus == 2) {
+                        playSingleTrack(currentTrack);
+                    }
                 }
             }
         });
@@ -253,6 +276,19 @@ public class MediaPlayerService extends Service {
         }
         return repeatStatus;
     }
+    public boolean shuffle(){
+        if(shuffleOn){
+            shuffleOn = false;
+            return false;
+        }else if(mIsPlayingFolder){
+            shuffleOn = true;
+            shuffledFolder = Arrays.copyOf(mFolder, mFolder.length);
+            Collections.shuffle(Arrays.asList(shuffledFolder));
+            return true;
+        }else{
+            return false;
+        }
+    }
     /**
      * Class to control media player instance.
      */
@@ -282,6 +318,9 @@ public class MediaPlayerService extends Service {
         public void playPrev(){ MediaPlayerService.this.playPrev();}
         public int repeat(){
             return MediaPlayerService.this.repeat();
+        }
+        public boolean shuffle(){
+            return MediaPlayerService.this.shuffle();
         }
     }
 
