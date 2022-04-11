@@ -188,6 +188,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        ImageButton shuffleButton = findViewById(R.id.shuffleButton);
+        shuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean status = mediaPlayerShuffle();
+                if(status){
+                    shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_on_48);
+                }else{
+                    shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_48);
+                }
+            }
+        });
         super.onResume();
     }
 
@@ -255,6 +267,13 @@ public class MainActivity extends AppCompatActivity {
             return mAudioControlsBinder.repeat();
         }else{
             return 0;
+        }
+    }
+    private boolean mediaPlayerShuffle(){
+        if(isConnected){
+            return mAudioControlsBinder.shuffle();
+        }else{
+            return false;
         }
     }
     @Override
