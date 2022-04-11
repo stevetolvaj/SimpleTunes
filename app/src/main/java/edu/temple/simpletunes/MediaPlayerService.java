@@ -205,14 +205,14 @@ public class MediaPlayerService extends Service {
      * The isPlaying method checks if the current audio file is playing.
      * @return True if playing or false if not.
      */
-    public boolean isPlaying() {
+    private boolean isPlaying() {
         return mMediaPlayer.isPlaying();
     }
 
     /**
      * The stop method will stop the currently playing audio file.
      */
-    public void stop() {
+    private void stop() {
         mMediaPlayer.stop();
     }
 
@@ -220,7 +220,7 @@ public class MediaPlayerService extends Service {
      * The playNext method checks if a track is being played from a folder. It then plays the
      * next song if any other are found in the folder.
      */
-    public void playNext() {
+    private void playNext() {
         if(mIsPlayingFolder) {
             if(mCurrentFolderIndex < mFolder.length - 1) {
                 mCurrentFolderIndex++;
@@ -240,7 +240,7 @@ public class MediaPlayerService extends Service {
      * The playPrev method checks if a track is being played from a folder. It then plays the
      * previous song if any other are found in the folder.
      */
-    public void playPrev() {
+    private void playPrev() {
         if(mIsPlayingFolder) {
             if(mCurrentFolderIndex > 0) {
                 mCurrentFolderIndex--;
@@ -255,7 +255,7 @@ public class MediaPlayerService extends Service {
             Toast.makeText(getApplicationContext(), "Not playing a folder", Toast.LENGTH_LONG).show();
         }
     }
-    public int repeat(){
+    private int repeat(){
         switch (repeatStatus){
             case 0:
                 if(mIsPlayingFolder){
@@ -276,7 +276,7 @@ public class MediaPlayerService extends Service {
         }
         return repeatStatus;
     }
-    public boolean shuffle(){
+    private boolean shuffle(){
         if(shuffleOn){
             shuffleOn = false;
             return false;
