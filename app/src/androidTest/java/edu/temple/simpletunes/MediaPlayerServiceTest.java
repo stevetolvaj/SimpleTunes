@@ -1,5 +1,6 @@
 package edu.temple.simpletunes;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 import android.provider.Settings;
 
@@ -51,11 +52,16 @@ public class MediaPlayerServiceTest {
 
     }
 
+
     @Test
     public void testIsPlayingFalse() {
         assertFalse(((MediaPlayerService.ControlsBinder) binder).isPlaying());
     }
-
+    @Test
+    public void testIsPlaying() {
+        ((MediaPlayerService.ControlsBinder) binder).play(Settings.System.DEFAULT_RINGTONE_URI);
+        assertTrue(((MediaPlayerService.ControlsBinder) binder).isPlaying());
+    }
     @Test
     public void testRepeatStatusSingleTrack() {
         int status = ((MediaPlayerService.ControlsBinder) binder).repeat();
@@ -63,6 +69,10 @@ public class MediaPlayerServiceTest {
         assertEquals(2, status);
 
     }
+
+
+
+
 //    @Test
 //    public void testRepeatStatusFolder() {
 //        DocumentFile[] folder = new DocumentFile[2];
@@ -71,7 +81,7 @@ public class MediaPlayerServiceTest {
 //        ((MediaPlayerService.ControlsBinder) binder).playFolder(folder);
 //
 //        int status = ((MediaPlayerService.ControlsBinder) binder).repeat();
-//
+
 //        assertEquals("it does this", 1, status);
 //    }
 

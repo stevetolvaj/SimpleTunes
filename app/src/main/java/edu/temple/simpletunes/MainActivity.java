@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 if (result.getData() != null) {
                     Uri audioFile = result.getData().getData();
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
-
                     mediaPlayerPlay(audioFile);
                     ImageButton playPauseButton = findViewById(R.id.playPauseButton);
                     playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
