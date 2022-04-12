@@ -9,8 +9,6 @@ activate User
 User->>main:Press pause/play button
 activate main
 main->>main:mediaPlayerPauseOrPlay()
-main->>player:if mAudioControlsBinder.isPlaying()
-player-->>main:mMediaPlayer.isPlaying()
 main->>player:mAudioControlsBinder.pause()
 
 deactivate main
