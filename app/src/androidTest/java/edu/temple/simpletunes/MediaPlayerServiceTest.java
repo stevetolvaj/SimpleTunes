@@ -73,17 +73,17 @@ public class MediaPlayerServiceTest {
 
 
 
-//    @Test
-//    public void testRepeatStatusFolder() {
-//        DocumentFile[] folder = new DocumentFile[2];
-//        folder[0] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
-//        folder[1] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
-//        ((MediaPlayerService.ControlsBinder) binder).playFolder(folder);
-//
-//        int status = ((MediaPlayerService.ControlsBinder) binder).repeat();
+    @Test
+    public void testRepeatStatusFolder() {
+        DocumentFile[] folder = new DocumentFile[2];
+        folder[0] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
+        folder[1] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
+        ((MediaPlayerService.ControlsBinder) binder).playFolder(folder);
 
-//        assertEquals("it does this", 1, status);
-//    }
+        int status = ((MediaPlayerService.ControlsBinder) binder).repeat();
+
+        assertEquals("it does this", 1, status);
+    }
 
 
 }

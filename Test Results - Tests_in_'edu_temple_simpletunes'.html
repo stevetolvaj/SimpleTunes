@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">2 ms</div>
+                <div class="time" xmlns="">12 ms</div>
                 <h1>
-                    Tests in 'edu.temple.simpletunes': <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">3 total, </span><span class="passed">3 passed</span></strong>
+                    Tests in 'edu.temple.simpletunes': <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">7 total, </span><span class="failed">2 failed, </span><span class="passed">5 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,45 +593,75 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">2 ms</div>
+                                <div class="time">3 ms</div>
                             </em>edu.temple.simpletunes.ExampleInstrumentedTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2 ms</div>
+                                        <div class="time">3 ms</div>
                                     </em><em class="status">passed</em>useAppContext</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">04-11 18:58:16.804 10363 10385 I TestRunner: started: useAppContext(edu.temple.simpletunes.ExampleInstrumentedTest)<br/>04-11 18:58:16.805 10363 10385 I TestRunner: finished: useAppContext(edu.temple.simpletunes.ExampleInstrumentedTest)<br/></span>
+                                        <span class="stdout">04-12 10:28:11.769 14482 14559 I TestRunner: started: useAppContext(edu.temple.simpletunes.ExampleInstrumentedTest)<br/>04-12 10:28:11.770 14482 14559 I TestRunner: finished: useAppContext(edu.temple.simpletunes.ExampleInstrumentedTest)<br/></span>
                                     </li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
-                    <li class="level top open">
+                    <li class="level top failed open">
                         <span><em class="time">
-                                <div class="time">0 ms</div>
+                                <div class="time">6 ms</div>
                             </em>edu.temple.simpletunes.MediaPlayerServiceTest</span>
                         <ul>
-                            <li class="level test">
+                            <li class="level test failed open">
                                 <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>testRepeatStatusSingleTrack</span>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">failed</em>testIsPlaying</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">04-11 18:58:16.808 10363 10385 I TestRunner: started: testRepeatStatusSingleTrack(edu.temple.simpletunes.MediaPlayerServiceTest)<br/>04-11 18:58:16.811   509  1461 I system_server: oneway function results will be dropped but finished with status OK and parcel size 4<br/>04-11 18:58:16.812   509  1461 I chatty  : uid=1000(system) Binder:509_C identical 2 lines<br/>04-11 18:58:16.812   509  1461 I system_server: oneway function results will be dropped but finished with status OK and parcel size 4<br/>04-11 18:58:16.813 10363 10363 D MEDIAPLAYERSERVICE: onBind: MediaPlayerService<br/>04-11 18:58:16.814 10363 10385 I TestRunner: finished: testRepeatStatusSingleTrack(edu.temple.simpletunes.MediaPlayerServiceTest)<br/></span>
+                                        <span class="stderr">java.lang.AssertionError<br/>at org.junit.Assert.fail(Assert.java:86)<br/>at org.junit.Assert.assertTrue(Assert.java:41)<br/>at org.junit.Assert.assertTrue(Assert.java:52)<br/>at edu.temple.simpletunes.MediaPlayerServiceTest.testIsPlaying(MediaPlayerServiceTest.java:63)<br/></span>
+                                    </li>
+                                    <li class="text">
+                                        <span class="stdout">04-12 10:28:11.775 14482 14559 I TestRunner: started: testIsPlaying(edu.temple.simpletunes.MediaPlayerServiceTest)<br/>04-12 10:28:11.794   509  1495 I system_server: oneway function results will be dropped but finished with status OK and parcel size 4<br/>04-12 10:28:11.794   509  1495 I chatty  : uid=1000(system) Binder:509_11 identical 2 lines<br/>04-12 10:28:11.794   509  1495 I system_server: oneway function results will be dropped but finished with status OK and parcel size 4<br/>04-12 10:28:11.797 14482 14482 D MEDIAPLAYERSERVICE: onBind: MediaPlayerService<br/>04-12 10:28:11.800 14482 14559 V MediaPlayer: resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false<br/>04-12 10:28:11.800 14482 14559 V MediaPlayer: cleanDrmObj: mDrmObj=null mDrmSessionId=null<br/>04-12 10:28:11.804 14313 14455 I Finsky  : [1011] qyi.accept(46): SCH: Scheduling phonesky job Id: 29-29, CT: 1649773691070, Constraints: [{ L: 30000, D: 60000, C: 1, I: 1, N: 0 }]<br/>04-12 10:28:11.810 14313 14456 I Finsky  : [1012] vp.invoke(18): [ContentSync] finished, scheduled=true<br/>04-12 10:28:11.823 14313 14456 I Finsky  : [1012] qxw.apply(14): SCH: Scheduling 1 system job(s)<br/>04-12 10:28:11.823 14313 14456 I Finsky  : [1012] qxw.apply(20): SCH: Scheduling system job Id: 9702, L: 29247, D: 59247, C: false, I: false, N: 0<br/>04-12 10:28:11.823   402   450 D NuPlayerDriver: NuPlayerDriver(0xb400006e3a1dd0b0) created, clientPid(14482)<br/>04-12 10:28:11.832 14313 14457 I Finsky  : [1013] qyi.accept(46): SCH: Scheduling phonesky job Id: 12-1, CT: 1649773691510, Constraints: [{ L: 15000, D: 86400000, C: 1, I: 1, N: 1 }]<br/>04-12 10:28:11.845 14313 14457 I Finsky  : [1013] qxw.apply(14): SCH: Scheduling 0 system job(s)<br/>04-12 10:28:11.846 14313 14457 I Finsky  : [1013] vp.invoke(18): [ContentSync] finished, scheduled=true<br/>04-12 10:28:11.924 14482 14559 E TestRunner: failed: testIsPlaying(edu.temple.simpletunes.MediaPlayerServiceTest)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: ----- begin exception -----<br/>04-12 10:28:11.924 14482 14559 E TestRunner: java.lang.AssertionError<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.Assert.fail(Assert.java:86)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.Assert.assertTrue(Assert.java:41)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.Assert.assertTrue(Assert.java:52)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at edu.temple.simpletunes.MediaPlayerServiceTest.testIsPlaying(MediaPlayerServiceTest.java:63)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at java.lang.reflect.Method.invoke(Native Method)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at androidx.test.internal.runner.junit4.statement.RunBefores.evaluate(RunBefores.java:80)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at androidx.test.rule.ServiceTestRule$ServiceStatement.evaluate(ServiceTestRule.java:337)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.rules.RunRules.evaluate(RunRules.java:20)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at androidx.test.ext.junit.runners.AndroidJUnit4.run(AndroidJUnit4.java:162)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.Suite.runChild(Suite.java:128)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.Suite.runChild(Suite.java:27)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at org.junit.runner.JUnitCore.run(JUnitCore.java:115)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at androidx.test.internal.runner.TestExecutor.execute(TestExecutor.java:56)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:444)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: 	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2205)<br/>04-12 10:28:11.924 14482 14559 E TestRunner: ----- end exception -----<br/>04-12 10:28:11.925 14482 14559 I TestRunner: finished: testIsPlaying(edu.temple.simpletunes.MediaPlayerServiceTest)<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test failed open">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">failed</em>testRepeatStatusFolder</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stderr">java.lang.IllegalStateException<br/>at android.media.MediaPlayer.prepareAsync(Native Method)<br/>at edu.temple.simpletunes.MediaPlayerService.playSingleTrack(MediaPlayerService.java:159)<br/>at edu.temple.simpletunes.MediaPlayerService.playFolder(MediaPlayerService.java:184)<br/>at edu.temple.simpletunes.MediaPlayerService.access$500(MediaPlayerService.java:33)<br/>at edu.temple.simpletunes.MediaPlayerService$ControlsBinder.playFolder(MediaPlayerService.java:314)<br/>at edu.temple.simpletunes.MediaPlayerServiceTest.testRepeatStatusFolder(MediaPlayerServiceTest.java:81)<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">0 ms</div>
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>testRepeatStatusSingleTrack</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
                                     </em><em class="status">passed</em>testIsPlayingFalse</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">04-11 18:58:16.816 10363 10385 I TestRunner: started: testIsPlayingFalse(edu.temple.simpletunes.MediaPlayerServiceTest)<br/>04-11 18:58:16.818 10363 10363 D MEDIAPLAYERSERVICE: onBind: MediaPlayerService<br/>04-11 18:58:16.818 10363 10363 V MediaPlayer: resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false<br/>04-11 18:58:16.819 10363 10363 V MediaPlayer: cleanDrmObj: mDrmObj=null mDrmSessionId=null<br/>04-11 18:58:16.819 10363 10385 I TestRunner: finished: testIsPlayingFalse(edu.temple.simpletunes.MediaPlayerServiceTest)<br/></span>
-                                    </li>
-                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="level top open">
+                        <span><em class="time">
+                                <div class="time">3 ms</div>
+                            </em>edu.temple.simpletunes.TestComparator</span>
+                        <ul>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>testOrder</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>testSortCorrect</span>
                             </li>
                         </ul>
                     </li>
