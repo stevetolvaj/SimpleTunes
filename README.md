@@ -1,7 +1,7 @@
 # Simple Tunes
 
 
-Simple Tunes is an android application that lets users listen to .mp3 files on their device. These .mp3 files can be anything from a downloaded fie to a something recorded and then played back. Users can open this application and scroll through all of their downloaded .mp3 files and then select something to listen to. After selecting something, the user is able to scroll through the audio file, skip to the next file or go back.
+Simple Tunes is an android application that lets users listen to .mp3 files on their device. These .mp3 files can be anything from a downloaded fie to a something recorded and then played back. Users can open this application and scroll through all of their downloaded .mp3 files and then select something to listen to. After selecting something, the user is able to scroll through the audio file, skip to the next file or go back. The application now also features shuffle and repeat capabilities. These buttons are both on the home screen of the app and let users shuffle songs when playing a folder. When it comes to the repeat button, it works both when playing a folder and playing a single song.
 
 
 # How to run
@@ -75,6 +75,8 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 -Select a folder to play by clicking on the button at the top of the screen that shows the multiple files icon
 
 -Use the previous and next buttons to navigate through tracks that are being played from a folder.
+
+-The app now offers the ability to repeat the song that is playing using the repeat button!
 
 -Changing UI coming soon!
 
