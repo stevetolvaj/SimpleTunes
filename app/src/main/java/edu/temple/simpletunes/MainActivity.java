@@ -27,9 +27,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String ADAPTER_DATA = "adapterData";
     private final String TAG = "MainActivity";
     private final String REPEAT_STATE_KEY = "repeatState";
     private final String SHUFFLE_STATE_KEY = "shuffleState";
@@ -45,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PlaylistAdapter playlistAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private List<String> adapterData = new ArrayList<>();
+
+
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -136,18 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        // TODO **************** Remove test code *****************
         recyclerView = findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
-        String[] trackNames = new String[20];
-        for (int i = 0; i < trackNames.length; i++) {
-            trackNames[i] = "Track Name " + (i+1) ;
-        }
-
-        PlaylistAdapter playlistAdapter = new PlaylistAdapter(trackNames);
-
+        playlistAdapter = new PlaylistAdapter(adapterData);
         recyclerView.setAdapter(playlistAdapter);
 
         ImageButton browserButton = findViewById(R.id.browserButton);
@@ -224,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         updateShuffleButton(shuffleState);
         playState = savedInstanceState.getBoolean(PLAY_STATE_KEY, false);
         updatePlayButton(playState);
+        adapterData = savedInstanceState.getStringArrayList(ADAPTER_DATA);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -232,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(REPEAT_STATE_KEY, repeatState);
         outState.putBoolean(SHUFFLE_STATE_KEY, shuffleState);
         outState.putBoolean(PLAY_STATE_KEY, playState);
+        outState.putStringArrayList(ADAPTER_DATA, (ArrayList<String>) adapterData);
         super.onSaveInstanceState(outState);
     }
     private void updateRepeatButton(int status){
@@ -309,12 +309,20 @@ public class MainActivity extends AppCompatActivity {
      */
     private void mediaPlayerPlay(Uri myUri) {
         String path = myUri.getPath();
-        if (isConnected) // Start service if first time playing a track.
+        String fileName = path.substring(path.lastIndexOf("/") + 1);
+        if (isConnected) { // Start service if first time playing a track.
             // Send file name through intent to service for first notification.
-            mServiceIntent.putExtra(TRACK_FILE_NAME, path.substring(path.lastIndexOf("/")+1));
+            mServiceIntent.putExtra(TRACK_FILE_NAME, fileName);
             startForegroundService(mServiceIntent);
-        mAudioControlsBinder.play(myUri);
-        playState = true;
+            mAudioControlsBinder.play(myUri);
+            playState = true;
+        }
+        adapterData.clear();
+        adapterData.add(fileName);
+        playlistAdapter.notifyDataSetChanged();
+        //playlistAdapter.updateData(adapterData);
+        Log.d(TAG, "mediaPlayerPlay: AdapterData" + adapterData.toString());
+
     }
 
     /**
@@ -325,12 +333,19 @@ public class MainActivity extends AppCompatActivity {
     private void mediaPlayerPlayFolder(DocumentFile[] folder) {
         Arrays.sort(folder, new DocumentFileComparator());
         String name = folder[0].getName();
-        if (isConnected)
+        if (isConnected) {
             // Send file name through intent to service for first notification.
             mServiceIntent.putExtra(TRACK_FILE_NAME, name);
             startForegroundService(mServiceIntent);
-        mAudioControlsBinder.playFolder(folder);
-        playState = true;
+            mAudioControlsBinder.playFolder(folder);
+            playState = true;
+            adapterData.clear();
+            for (DocumentFile file :
+                    folder) {
+                adapterData.add(file.getName());
+            }
+            playlistAdapter.notifyDataSetChanged();
+        }
     }
     private int mediaPlayerRepeat(){
         if(isConnected){

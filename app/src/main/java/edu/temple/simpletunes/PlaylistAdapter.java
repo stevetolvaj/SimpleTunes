@@ -1,7 +1,5 @@
 package edu.temple.simpletunes;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
-    private String[] trackNames;
+    private List<String> trackNames = new ArrayList<>();
 
     /**
      * Provide a reference to the type of views that you are using
@@ -46,11 +46,11 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     /**
      * Initialize the dataset of the Adapter.
      *
-     * @param dataSet String[] containing the data to populate views to be used
+     * @param data String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public PlaylistAdapter(String[] dataSet) {
-        trackNames = dataSet;
+    public PlaylistAdapter(List<String> data) {
+        this.trackNames.addAll(data);
     }
 
     // Create new views (invoked by the layout manager)
@@ -67,19 +67,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-
+        String trackNum = "Track#";
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getNameTextView().setText(trackNames[position]);
-        Log.d("TEST", "onBindViewHolder:" + position);
-        // Using locale for string translation in different locales.
-        String trackNum = "Track#";
-        viewHolder.getNumTextView().setText(String.format(Locale.getDefault(),"%s%d", trackNum, position));
+
+            viewHolder.getNameTextView().setText(trackNames.get(position));
+            viewHolder.getNumTextView().setText(String.format(Locale.getDefault(),"%s%d", trackNum, position + 1));
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return trackNames.length;
+        return trackNames.size();
     }
 }
