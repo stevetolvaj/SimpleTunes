@@ -273,12 +273,19 @@ public class MediaPlayerService extends Service {
             case 0:
                 if(mIsPlayingFolder){
                     repeatStatus = 1;
+                }else if(shuffleOn){
+                    Toast.makeText(this, "Can't repeat single file in shuffle mode", Toast.LENGTH_SHORT).show();
                 }else{
                     repeatStatus = 2;
                 }
                 break;
             case 1:
-                repeatStatus = 2;
+                if(shuffleOn){
+                    Toast.makeText(this, "Can't repeat single file in shuffle mode", Toast.LENGTH_SHORT).show();
+                    repeatStatus = 0;
+                }else{
+                    repeatStatus = 2;
+                }
                 break;
             case 2:
                 repeatStatus = 0;
@@ -293,12 +300,16 @@ public class MediaPlayerService extends Service {
         if(shuffleOn){
             shuffleOn = false;
             return false;
+        }else if(repeatStatus == 2){
+            Toast.makeText(this, "Can't turn on shuffle when repeating a single file", Toast.LENGTH_SHORT).show();
+            return false;
         }else if(mIsPlayingFolder){
             shuffleOn = true;
             shuffledFolder = Arrays.copyOf(mFolder, mFolder.length);
             Collections.shuffle(Arrays.asList(shuffledFolder));
             return true;
         }else{
+            Toast.makeText(this, "Can't shuffle when not playing a folder", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
