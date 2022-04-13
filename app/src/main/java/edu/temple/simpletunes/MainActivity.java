@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -40,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private int repeatState = 0;
     private boolean shuffleState = false;
     private boolean playState = false;
+    private RecyclerView recyclerView;
+    private PlaylistAdapter playlistAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -131,6 +136,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        // TODO **************** Remove test code *****************
+        recyclerView = findViewById(R.id.recyclerView);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        String[] trackNames = new String[20];
+        for (int i = 0; i < trackNames.length; i++) {
+            trackNames[i] = "Track Name " + (i+1) ;
+        }
+
+        PlaylistAdapter playlistAdapter = new PlaylistAdapter(trackNames);
+
+        recyclerView.setAdapter(playlistAdapter);
+
         ImageButton browserButton = findViewById(R.id.browserButton);
         browserButton.setOnClickListener(view -> {
             if(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE)){
@@ -329,6 +348,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return shuffleState;
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
