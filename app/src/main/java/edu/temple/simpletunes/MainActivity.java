@@ -29,11 +29,17 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
+    private final String REPEAT_STATE_KEY = "repeatState";
+    private final String SHUFFLE_STATE_KEY = "shuffleState";
+    private final String PLAY_STATE_KEY = "playState";
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private ActivityResultLauncher<Intent> folderLauncher;
     public static final String TRACK_FILE_NAME = "trackFileName";
     private static final int STORAGE_PERMISSION_CODE = 101;
     private Intent mServiceIntent;
+    private int repeatState = 0;
+    private boolean shuffleState = false;
+    private boolean playState = false;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -153,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
         playPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               mediaPlayerPauseOrStart();
+                boolean status = mediaPlayerPauseOrStart();
+                updatePlayButton(status);
             }
         });
         ImageButton skipNextButton = findViewById(R.id.skipNextButton);
@@ -176,19 +183,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int status = mediaPlayerRepeat();
-                switch (status){
-                    case 0:
-                        repeatButton.setImageResource(R.drawable.ic_baseline_repeat_48);
-                        break;
-                    case 1:
-                        repeatButton.setImageResource(R.drawable.ic_baseline_repeat_on_48);
-                        break;
-                    case 2:
-                        repeatButton.setImageResource(R.drawable.ic_baseline_repeat_one_48);
-                        break;
-                    default:
-                        break;
-                }
+                updateRepeatButton(status);
             }
         });
         ImageButton shuffleButton = findViewById(R.id.shuffleButton);
@@ -196,16 +191,62 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 boolean status = mediaPlayerShuffle();
-                if(status){
-                    shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_on_48);
-                }else{
-                    shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_48);
-                }
+                updateShuffleButton(status);
             }
         });
         super.onResume();
     }
 
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        repeatState = savedInstanceState.getInt(REPEAT_STATE_KEY, 0);
+        updateRepeatButton(repeatState);
+        shuffleState = savedInstanceState.getBoolean(SHUFFLE_STATE_KEY, false);
+        updateShuffleButton(shuffleState);
+        playState = savedInstanceState.getBoolean(PLAY_STATE_KEY, false);
+        updatePlayButton(playState);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(REPEAT_STATE_KEY, repeatState);
+        outState.putBoolean(SHUFFLE_STATE_KEY, shuffleState);
+        outState.putBoolean(PLAY_STATE_KEY, playState);
+        super.onSaveInstanceState(outState);
+    }
+    private void updateRepeatButton(int status){
+        ImageButton repeatButton = findViewById(R.id.repeatButton);
+        switch (status){
+            case 0:
+                repeatButton.setImageResource(R.drawable.ic_baseline_repeat_48);
+                break;
+            case 1:
+                repeatButton.setImageResource(R.drawable.ic_baseline_repeat_on_48);
+                break;
+            case 2:
+                repeatButton.setImageResource(R.drawable.ic_baseline_repeat_one_48);
+                break;
+            default:
+                break;
+        }
+    }
+    private void updateShuffleButton(boolean status){
+        ImageButton shuffleButton = findViewById(R.id.shuffleButton);
+        if(status){
+            shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_on_48);
+        }else{
+            shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_48);
+        }
+    }
+    private void updatePlayButton(boolean isPlaying){
+        ImageButton playPauseButton = findViewById(R.id.playPauseButton);
+        if(isPlaying){
+            playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
+        }else{
+            playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72);
+        }
+    }
     /**
      * The mediaPlayerPrev method is used to skip to the previously played track in the file.
      */
@@ -227,17 +268,19 @@ public class MainActivity extends AppCompatActivity {
      * The mediaPlayerPauseOrStart method is used to pause the current track or start from the
      * paused position. Checks if service is bound first.
      */
-    private void mediaPlayerPauseOrStart() {
+    private boolean mediaPlayerPauseOrStart() {
         if (isConnected) {
-            ImageButton playPauseButton = findViewById(R.id.playPauseButton);
-            if (mAudioControlsBinder.isPlaying()){
+            playState = mAudioControlsBinder.isPlaying();
+            if(playState){
                 mAudioControlsBinder.pause();
-                playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72);
-            } else if(!mAudioControlsBinder.isPlaying()){
+            }else{
                 mAudioControlsBinder.resume();
-                playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
             }
+        }else{
+            playState = false;
         }
+        playState = mAudioControlsBinder.isPlaying();
+        return playState;
     }
 
     /**
@@ -252,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
             mServiceIntent.putExtra(TRACK_FILE_NAME, path.substring(path.lastIndexOf("/")+1));
             startForegroundService(mServiceIntent);
         mAudioControlsBinder.play(myUri);
+        playState = true;
     }
 
     /**
@@ -267,20 +311,23 @@ public class MainActivity extends AppCompatActivity {
             mServiceIntent.putExtra(TRACK_FILE_NAME, name);
             startForegroundService(mServiceIntent);
         mAudioControlsBinder.playFolder(folder);
+        playState = true;
     }
     private int mediaPlayerRepeat(){
         if(isConnected){
-            return mAudioControlsBinder.repeat();
+            repeatState = mAudioControlsBinder.repeat();
         }else{
-            return 0;
+            repeatState = 0;
         }
+        return repeatState;
     }
     private boolean mediaPlayerShuffle(){
         if(isConnected){
-            return mAudioControlsBinder.shuffle();
+            shuffleState = mAudioControlsBinder.shuffle();
         }else{
-            return false;
+            shuffleState = false;
         }
+        return shuffleState;
     }
     @Override
     protected void onDestroy() {
