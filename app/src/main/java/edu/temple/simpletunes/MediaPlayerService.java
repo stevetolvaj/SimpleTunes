@@ -20,10 +20,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * MediaPlayerService is a service created to run the MediaPlayer instance in the background
@@ -57,46 +55,61 @@ public class MediaPlayerService extends Service {
         // Plays until last file is completed then resets variables.
         mMediaPlayer.setOnCompletionListener(mp -> {
             if(mIsPlayingFolder && shuffleOn){
+                // shuffle functionality
                 if (mCurrentFolderIndex < mFolder.length - 1) {
+                    // we're not at the end of the shuffled folder yet
                     mCurrentFolderIndex++;
                     Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of shuffled folder");
                     playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
                     // Update notification with filename
                     mNotificationManager.notify(NOTIFICATION_ID, getNotification(shuffledFolder[mCurrentFolderIndex].getName()));
-                }else {
+                }else{
+                    // this is the last track in the shuffled folder, so reset index
                     mCurrentFolderIndex = 0;
-                    // Set is playing folder back to false after last file is played.
                     if (repeatStatus == 1) {
+                        // repeat folder is on, so start playing from the beginning again
                         Log.d(TAG, "onCompleteListener: restarting from beginning of shuffled folder ");
                         playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
                     } else {
                         mIsPlayingFolder = false;
                     }
                 }
-            }else{
-                if (mIsPlayingFolder && mCurrentFolderIndex < mFolder.length - 1) {
-                    mCurrentFolderIndex++;
+            }else if(mIsPlayingFolder){
+                //folder playing functionality
+                if (mCurrentFolderIndex < mFolder.length - 1) {
+                    // we're not at the end of the folder yet
+                    if(repeatStatus != 2){
+                        // repeat file isn't on, so increment the index
+                        mCurrentFolderIndex++;
+                    }
                     Log.d(TAG, "onCompleteListener: Playing track at index " + mCurrentFolderIndex + " of folder");
                     playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
                     // Update notification with filename
                     mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
-                } else {
-                    mCurrentFolderIndex = 0;
-                    // Set is playing folder back to false after last file is played.
-                    if (mIsPlayingFolder) {
+                }else{
+                    // we're at the end of the folder
+                    if(repeatStatus == 2){
+                        // repeat file is on, so play the same track again
+                        playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                    }else{
+                        // we're at the end of the folder, so reset the index
                         Log.d(TAG, "onCompleteListener: Reached end of tracks in folder");
-                        if (repeatStatus == 1) {
+                        mCurrentFolderIndex = 0;
+                        if(repeatStatus == 1){
+                            // repeat folder is on, so play from the beginning
                             Log.d(TAG, "onCompleteListener: restarting from beginning of folder ");
                             playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                        } else {
+                        }else{
+                            // we're at the end of the folder, and repeat is off, so we're no longer playing a folder
                             mIsPlayingFolder = false;
                         }
                     }
-                    if (repeatStatus == 2) {
-                        playSingleTrack(currentTrack);
-                    }
                 }
+            }else if (repeatStatus == 2) {
+                // we're not playing a folder, but repeat file is on
+                playSingleTrack(currentTrack);
             }
+            // if none of the if statements are true, then we're only playing a single file, and repeat is off, so there's nothing to do
         });
     }
 
