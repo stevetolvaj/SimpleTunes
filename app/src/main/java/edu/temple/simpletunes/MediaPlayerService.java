@@ -42,8 +42,6 @@ public class MediaPlayerService extends Service {
     private boolean shuffleOn = false;
     private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
     private Uri currentTrack;
-    public MediaPlayerService() {
-    }
 
     @Override
     public void onCreate() {
@@ -137,7 +135,6 @@ public class MediaPlayerService extends Service {
                 .setContentIntent(pendingIntent)
                 .setOnlyAlertOnce(true)
                 .build();
-
     }
 
     @Override
@@ -313,6 +310,27 @@ public class MediaPlayerService extends Service {
             return false;
         }
     }
+
+    /**
+     * The play method plays a track at a specific position if a Uri has been loaded into
+     * the MediaPlayerService first.
+     * @param position The position or the single track to play if not a folder.
+     */
+    private void play(int position) {
+        if (mIsPlayingFolder) {
+            mCurrentFolderIndex = position;
+            playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            // Update notification
+            mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+        } else {
+            if (currentTrack == null) {
+                Toast.makeText(getApplicationContext(), "Select a track or folder to play", Toast.LENGTH_LONG).show();
+            } else {
+                play(currentTrack);
+            }
+        }
+    }
+
     /**
      * Class to control media player instance.
      */
@@ -350,8 +368,10 @@ public class MediaPlayerService extends Service {
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
-    }
 
+        public void play(int position) { MediaPlayerService.this.play(position);
+        }
+    }
 
     @Override
     public void onDestroy() {

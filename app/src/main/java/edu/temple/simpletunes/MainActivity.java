@@ -11,18 +11,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -45,12 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private int repeatState = 0;
     private boolean shuffleState = false;
     private boolean playState = false;
-    private RecyclerView recyclerView;
     private PlaylistAdapter playlistAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     private List<String> adapterData = new ArrayList<>();
-
-
+    private OnClickInterface onClickInterface;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -75,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Interface for playlistAdapter items being clicked. Play track at specific position.
+        onClickInterface = position -> {
+            if(isConnected) {
+                mAudioControlsBinder.play(position);
+            }
+        };
+
+        if(savedInstanceState == null) {
+            // Show default message in RecyclerView on start of app.
+            adapterData.add(getString(R.string.adapterDefaultMessage));
+        }
 
         // Bind the MediaPlayerService to the MainActivity.
         mServiceIntent = new Intent(this, MediaPlayerService.class);
@@ -142,10 +147,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        recyclerView = findViewById(R.id.recyclerView);
-        layoutManager = new LinearLayoutManager(this);
+        // Initialize the RecyclerView variables.
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        playlistAdapter = new PlaylistAdapter(adapterData);
+        playlistAdapter = new PlaylistAdapter(this, adapterData, onClickInterface);
         recyclerView.setAdapter(playlistAdapter);
 
         ImageButton browserButton = findViewById(R.id.browserButton);
@@ -317,10 +323,10 @@ public class MainActivity extends AppCompatActivity {
             mAudioControlsBinder.play(myUri);
             playState = true;
         }
+        // Update RecyclerView data
         adapterData.clear();
         adapterData.add(fileName);
         playlistAdapter.notifyDataSetChanged();
-        //playlistAdapter.updateData(adapterData);
         Log.d(TAG, "mediaPlayerPlay: AdapterData" + adapterData.toString());
 
     }
@@ -339,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
             startForegroundService(mServiceIntent);
             mAudioControlsBinder.playFolder(folder);
             playState = true;
+            // update RecyclerView data
             adapterData.clear();
             for (DocumentFile file :
                     folder) {
@@ -370,5 +377,13 @@ public class MainActivity extends AppCompatActivity {
         unbindService(mServiceConnection);
         if (!isChangingConfigurations())
             stopService(new Intent(this, MediaPlayerService.class));
+    }
+
+    /**
+     * The OnClickInterface is used to acquire the position of an item selected by passing into the
+     * playlistAdapter.
+     */
+    public interface OnClickInterface {
+        void itemClicked(int position);
     }
 }

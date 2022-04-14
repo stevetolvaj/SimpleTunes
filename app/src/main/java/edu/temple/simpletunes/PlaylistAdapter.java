@@ -1,6 +1,6 @@
 package edu.temple.simpletunes;
 
-import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
+/**
+ * The PlaylistAdapter class is used to control the views within the RecyclerView and allows
+ * new tracks to be shown and selected.
+ */
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
-    private List<String> trackNames = new ArrayList<>();
+    private final List<String> trackNames = new ArrayList<>();
+    private final Context mContext;
+    private final MainActivity.OnClickInterface mOnClickInterface;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -26,31 +31,43 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         private final TextView nameTextView;
 
 
+        /**
+         * Initialize the views within the parent view.
+         * @param view The parent view.
+         */
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
             numTextView = view.findViewById(R.id.trackNumTextView);
             nameTextView = view.findViewById(R.id.trackTitleTextView);
         }
 
+        /**
+         * The getNameTextView method.
+         * @return The nameTextView
+         */
         public TextView getNameTextView() {
             return nameTextView;
         }
 
+        /**
+         * The getNumTextView method.
+         * @return The numTextView
+         */
         public TextView getNumTextView() {
             return numTextView;
         }
     }
 
     /**
-     * Initialize the dataset of the Adapter.
-     *
-     * @param data String[] containing the data to populate views to be used
-     * by RecyclerView.
+     * Initialize the Context, dataset, and interface for returning position of selections.
+     * @param context Context used for string resources.
+     * @param data The list containing data to show in the RecyclerView.
+     * @param onClickInterface The interface to return position of items selected.
      */
-    public PlaylistAdapter(List<String> data) {
+    public PlaylistAdapter(Context context, List<String> data, MainActivity.OnClickInterface onClickInterface) {
+        this.mContext = context;
         this.trackNames.addAll(data);
+        this.mOnClickInterface = onClickInterface;
     }
 
     // Create new views (invoked by the layout manager)
@@ -64,21 +81,21 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        String trackNum = "Track#";
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
+            viewHolder.itemView.setOnClickListener(v -> mOnClickInterface.itemClicked(viewHolder.getAdapterPosition()));
 
             viewHolder.getNameTextView().setText(trackNames.get(position));
-            viewHolder.getNumTextView().setText(String.format(Locale.getDefault(),"%s%d", trackNum, position + 1));
+            viewHolder.getNumTextView().setText(String.format(mContext.getString(R.string.trackNum), position + 1));
+
 
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return trackNames.size();
     }
+
 }
