@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:background="@color/white"
         android:contentDescription="@string/playFile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,6 +22,7 @@
         android:id="@+id/playPauseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
         android:background="#00FFFFFF"
         android:contentDescription="@string/playPause"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.811"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_baseline_play_circle_outline_72" />
 
     <ImageButton
@@ -37,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:background="#00FFFFFF"
         android:contentDescription="@string/playFolder"
         app:layout_constraintStart_toEndOf="@+id/browserButton"
         app:layout_constraintTop_toTopOf="parent"
@@ -93,7 +96,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
-        android:background="@android:drawable/editbox_dropdown_light_frame"
         android:layout_height="0dp"
         android:layout_margin="10sp"
         app:layout_constraintBottom_toTopOf="@+id/shuffleButton"
