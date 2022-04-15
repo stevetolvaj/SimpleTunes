@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private final String REPEAT_STATE_KEY = "repeatState";
     private final String SHUFFLE_STATE_KEY = "shuffleState";
     private final String PLAY_STATE_KEY = "playState";
+    public static final String TRACK_POSITION = "broadcastTrackPosition";
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private ActivityResultLauncher<Intent> folderLauncher;
     public static final String TRACK_FILE_NAME = "trackFileName";
@@ -46,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
     private List<String> adapterData = new ArrayList<>();
     private OnClickInterface onClickInterface;
     private boolean nightModeState = false;
+    private int currentTrackNum = 0;
+
+    /**
+     * The mReceiver field is used to receive the current track number of a folder being played in
+     * the MediaPlayerService
+     */
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            currentTrackNum = intent.getIntExtra(TRACK_POSITION, 0);
+            playlistAdapter.setHighlightedPosition(currentTrackNum);
+            Log.d(TAG, "onReceive: Track changed to position " + currentTrackNum);
+        }
+    };
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -97,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
                     mediaPlayerPlay(audioFile);
                     updatePlayButton(true);
+                    currentTrackNum = 0; // Reset returned save instance if selecting new track.
                 }
             }
         });
@@ -115,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
                         mediaPlayerPlayFolder(contents);
                         updatePlayButton(true);
+                        currentTrackNum = 0; // Reset returned save instance if selecting new track.
                     }
                 }
             }
@@ -154,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         playlistAdapter = new PlaylistAdapter(this, adapterData, onClickInterface);
         recyclerView.setAdapter(playlistAdapter);
+        playlistAdapter.setHighlightedPosition(currentTrackNum);
+
+        // Intent filter for receiving current track num from MediaPlayerService
+        IntentFilter filter = new IntentFilter(MediaPlayerService.BROADCAST_TRACK_CHANGED);
+        registerReceiver(mReceiver, filter);
 
         ImageButton browserButton = findViewById(R.id.browserButton);
         browserButton.setOnClickListener(view -> {
@@ -231,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
         playState = savedInstanceState.getBoolean(PLAY_STATE_KEY, false);
         updatePlayButton(playState);
         adapterData = savedInstanceState.getStringArrayList(ADAPTER_DATA);
+        currentTrackNum = savedInstanceState.getInt(TRACK_POSITION, 0);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -240,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putBoolean(SHUFFLE_STATE_KEY, shuffleState);
         outState.putBoolean(PLAY_STATE_KEY, playState);
         outState.putStringArrayList(ADAPTER_DATA, (ArrayList<String>) adapterData);
+        outState.putInt(TRACK_POSITION, currentTrackNum);
         super.onSaveInstanceState(outState);
     }
     private void updateNightMode(){
@@ -360,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
         // Update RecyclerView data
         adapterData.clear();
         adapterData.add(fileName);
-        playlistAdapter.notifyDataSetChanged();
+        playlistAdapter.notifyItemChanged(0);
         Log.d(TAG, "mediaPlayerPlay: AdapterData" + adapterData.toString());
 
     }
@@ -403,6 +429,12 @@ public class MainActivity extends AppCompatActivity {
             shuffleState = false;
         }
         return shuffleState;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
     }
 
     @Override
