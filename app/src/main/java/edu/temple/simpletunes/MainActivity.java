@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private PlaylistAdapter playlistAdapter;
     private List<String> adapterData = new ArrayList<>();
     private OnClickInterface onClickInterface;
+    private boolean nightModeState = false;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        updateNightMode();
         setContentView(R.layout.activity_main);
 
         // Interface for playlistAdapter items being clicked. Play track at specific position.
@@ -93,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     Uri audioFile = result.getData().getData();
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
                     mediaPlayerPlay(audioFile);
-                    ImageButton playPauseButton = findViewById(R.id.playPauseButton);
-                    playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
+                    updatePlayButton(true);
                 }
             }
         });
@@ -112,8 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         DocumentFile[] contents = directory.listFiles();
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
                         mediaPlayerPlayFolder(contents);
-                        ImageButton playPauseButton = findViewById(R.id.playPauseButton);
-                        playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
+                        updatePlayButton(true);
                     }
                 }
             }
@@ -160,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent();
                 i.setAction(Intent.ACTION_OPEN_DOCUMENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("audio/mpeg");
+                i.setType("*/*");
+                i.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"audio/*"});
                 mActivityResultLauncher.launch(i);
             }
         });
@@ -240,34 +242,66 @@ public class MainActivity extends AppCompatActivity {
         outState.putStringArrayList(ADAPTER_DATA, (ArrayList<String>) adapterData);
         super.onSaveInstanceState(outState);
     }
+    private void updateNightMode(){
+        // https://stackoverflow.com/questions/44170028/android-how-to-detect-if-night-mode-is-on-when-using-appcompatdelegate-mode-ni
+        int nightModeFlags = getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if(nightModeFlags == Configuration.UI_MODE_NIGHT_YES){
+            nightModeState = true;
+        }else if(nightModeFlags == Configuration.UI_MODE_NIGHT_NO){
+            nightModeState = false;
+        }
+    }
     private void updateRepeatButton(int status){
+        updateNightMode();
         ImageButton repeatButton = findViewById(R.id.repeatButton);
         switch (status){
             case 0:
-                repeatButton.setImageResource(R.drawable.ic_baseline_repeat_48);
+                if(nightModeState){
+                    repeatButton.setImageResource(R.drawable.ic_baseline_repeat_48_night);
+                }else{
+                    repeatButton.setImageResource(R.drawable.ic_baseline_repeat_48);
+                }
                 break;
             case 1:
-                repeatButton.setImageResource(R.drawable.ic_baseline_repeat_on_48);
+                if(nightModeState){
+                    repeatButton.setImageResource(R.drawable.ic_baseline_repeat_on_48_night);
+                }else{
+                    repeatButton.setImageResource(R.drawable.ic_baseline_repeat_on_48);
+                }
                 break;
             case 2:
-                repeatButton.setImageResource(R.drawable.ic_baseline_repeat_one_48);
+                if(nightModeState){
+                    repeatButton.setImageResource(R.drawable.ic_baseline_repeat_one_48_night);
+                }else{
+                    repeatButton.setImageResource(R.drawable.ic_baseline_repeat_one_48);
+                }
                 break;
             default:
                 break;
         }
     }
     private void updateShuffleButton(boolean status){
+        updateNightMode();
         ImageButton shuffleButton = findViewById(R.id.shuffleButton);
-        if(status){
+        if(status && nightModeState) {
+            shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_on_48_night);
+        }else if(status){
             shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_on_48);
+        }else if(nightModeState){
+            shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_48_night);
         }else{
             shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_48);
         }
     }
     private void updatePlayButton(boolean isPlaying){
+        updateNightMode();
         ImageButton playPauseButton = findViewById(R.id.playPauseButton);
-        if(isPlaying){
+        if(isPlaying && nightModeState){
+            playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72_night);
+        }else if(isPlaying){
             playPauseButton.setImageResource(R.drawable.ic_baseline_pause_circle_outline_72);
+        } else if (nightModeState) {
+            playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72_night);
         }else{
             playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72);
         }
