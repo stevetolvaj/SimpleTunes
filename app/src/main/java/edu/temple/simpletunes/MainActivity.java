@@ -112,8 +112,12 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onActivityResult: got empty directory");
                     }else{
                         DocumentFile[] contents = directory.listFiles();
+                        MusicTrack[] folder = new MusicTrack[contents.length];
+                        for(int i = 0; i < contents.length; i++){
+                            folder[i] = new MusicTrack(MainActivity.this, contents[i]);
+                        }
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
-                        mediaPlayerPlayFolder(contents);
+                        mediaPlayerPlayFolder(folder);
                         updatePlayButton(true);
                     }
                 }
@@ -370,8 +374,8 @@ public class MainActivity extends AppCompatActivity {
      * last file is completed playing.
      * @param folder The DocumentFile array to play all audio files from.
      */
-    private void mediaPlayerPlayFolder(DocumentFile[] folder) {
-        Arrays.sort(folder, new DocumentFileComparator());
+    private void mediaPlayerPlayFolder(MusicTrack[] folder) {
+        Arrays.sort(folder, new MusicTrackComparator());
         String name = folder[0].getName();
         if (isConnected) {
             // Send file name through intent to service for first notification.
@@ -381,8 +385,7 @@ public class MainActivity extends AppCompatActivity {
             playState = true;
             // update RecyclerView data
             adapterData.clear();
-            for (DocumentFile file :
-                    folder) {
+            for (MusicTrack file : folder) {
                 adapterData.add(file.getName());
             }
             playlistAdapter.notifyDataSetChanged();

@@ -17,15 +17,15 @@ import java.util.Arrays;
 @SmallTest
 public class TestComparator {
 
-    private DocumentFileComparator mFileComparator;
-    DocumentFile[] folder;
+    private MusicTrackComparator mFileComparator;
+    MusicTrack[] folder;
 
     @Before
     public void setUp() {
-        mFileComparator = new DocumentFileComparator();
-       folder = new DocumentFile[2];
-       folder[0] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_NOTIFICATION_URI.getPath()));
-       folder[1] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
+        mFileComparator = new MusicTrackComparator();
+        folder = new MusicTrack[2];
+        folder[0] = new MusicTrack(null, DocumentFile.fromFile(new File(Settings.System.DEFAULT_NOTIFICATION_URI.getPath())));
+        folder[1] = new MusicTrack(null, DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath())));
 
     }
 
@@ -37,7 +37,7 @@ public class TestComparator {
 
     @Test
     public void testSortCorrect() {
-        Arrays.sort(folder, new DocumentFileComparator());
+        Arrays.sort(folder, new MusicTrackComparator());
         String name2 = folder[1].getName();
 
         assertEquals("notification_sound", name2);

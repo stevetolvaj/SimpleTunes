@@ -35,8 +35,8 @@ public class MediaPlayerService extends Service {
     private final static String TAG = "MEDIAPLAYERSERVICE";
     public static final int NOTIFICATION_ID = 1;
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
-    private DocumentFile[] mFolder; // The folder that should be played
-    private DocumentFile[] shuffledFolder;
+    private MusicTrack[] mFolder; // The folder that should be played
+    private MusicTrack[] shuffledFolder;
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
     private NotificationManager mNotificationManager;
     private boolean shuffleOn = false;
@@ -188,13 +188,12 @@ public class MediaPlayerService extends Service {
      *
      * @param folder The Uri of the audio file.
      */
-    private void playFolder(DocumentFile[] folder) {
+    private void playFolder(MusicTrack[] folder) {
         mIsPlayingFolder = true;
         mFolder = folder;
         playSingleTrack(folder[0].getUri());
 
     }
-
     /**
      * The pause method pauses the currently playing audio file and saves the current position
      * to resume the current audio file.
@@ -353,7 +352,9 @@ public class MediaPlayerService extends Service {
         
         public void resume() { MediaPlayerService.this.resume();}
 
-        public void playFolder (DocumentFile[] folder){ MediaPlayerService.this.playFolder(folder);}
+        public void playFolder (MusicTrack[] folder){
+            MediaPlayerService.this.playFolder(folder);
+        }
 
         public void playNext(){ MediaPlayerService.this.playNext();}
 
