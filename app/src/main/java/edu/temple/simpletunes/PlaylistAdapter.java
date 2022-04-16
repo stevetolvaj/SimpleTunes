@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
-    private final List<String> trackNames = new ArrayList<>();
+    private List<String> trackNames;
     private final Context mContext;
     private final MainActivity.OnClickInterface mOnClickInterface;
     private int highlightedPosition = 0;
@@ -72,7 +72,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
      */
     public PlaylistAdapter(Context context, List<String> data, MainActivity.OnClickInterface onClickInterface) {
         this.mContext = context;
-        this.trackNames.addAll(data);
+        this.trackNames = data;
         this.mOnClickInterface = onClickInterface;
     }
 

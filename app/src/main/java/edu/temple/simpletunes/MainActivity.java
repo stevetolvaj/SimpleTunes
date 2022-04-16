@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String ADAPTER_DATA = "adapterData";
+    public static final String ADAPTER_DATA = "adapterData";
     private final String TAG = "MainActivity";
     private final String REPEAT_STATE_KEY = "repeatState";
     private final String SHUFFLE_STATE_KEY = "shuffleState";
@@ -59,8 +59,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             currentTrackNum = intent.getIntExtra(TRACK_POSITION, 0);
+            if (intent.hasExtra(ADAPTER_DATA)) {
+                adapterData.clear();
+                adapterData.addAll(intent.getStringArrayListExtra(ADAPTER_DATA));
+                playlistAdapter.notifyDataSetChanged();
+            }
             playlistAdapter.setHighlightedPosition(currentTrackNum);
-            Log.d(TAG, "onReceive: Track changed to position " + currentTrackNum);
+            Log.d(TAG, "onReceive: adapter data" + intent.getStringArrayListExtra(ADAPTER_DATA));
         }
     };
 

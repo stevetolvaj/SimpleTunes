@@ -1,6 +1,7 @@
 package edu.temple.simpletunes;
 
 import static edu.temple.simpletunes.AppNotificationChannel.CHANNEL_ID;
+import static edu.temple.simpletunes.MainActivity.ADAPTER_DATA;
 import static edu.temple.simpletunes.MainActivity.TRACK_POSITION;
 import static edu.temple.simpletunes.MainActivity.TRACK_FILE_NAME;
 
@@ -21,8 +22,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * MediaPlayerService is a service created to run the MediaPlayer instance in the background
@@ -321,6 +324,8 @@ public class MediaPlayerService extends Service {
     private boolean shuffle() {
         if (shuffleOn) {
             shuffleOn = false;
+            broadcastIntent.putStringArrayListExtra(ADAPTER_DATA, getFileNames(mFolder));
+            sendBroadcast(broadcastIntent);
             return false;
         } else if (repeatStatus == 2) {
             Toast.makeText(this, "Can't turn on shuffle when repeating a single file", Toast.LENGTH_SHORT).show();
@@ -329,11 +334,27 @@ public class MediaPlayerService extends Service {
             shuffleOn = true;
             shuffledFolder = Arrays.copyOf(mFolder, mFolder.length);
             Collections.shuffle(Arrays.asList(shuffledFolder));
+
+            broadcastIntent.putStringArrayListExtra(ADAPTER_DATA, getFileNames(shuffledFolder));
+            sendBroadcast(broadcastIntent);
             return true;
         } else {
             Toast.makeText(this, "Can't shuffle when not playing a folder", Toast.LENGTH_SHORT).show();
             return false;
         }
+    }
+
+    /**
+     * The getFileNames method used to return a string array of the filenames.
+     * @param folder The DocumentFile array
+     * @return The String ArrayList of filenames.
+     */
+    private ArrayList<String> getFileNames(DocumentFile[] folder) {
+        ArrayList<String> adapterData = new ArrayList<>();
+        for (int i = 0; i < folder.length ; i++) {
+            adapterData.add(folder[i].getName());
+        }
+        return adapterData;
     }
 
     /**
