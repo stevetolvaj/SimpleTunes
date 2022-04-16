@@ -250,9 +250,15 @@ public class MediaPlayerService extends Service {
             if (mCurrentFolderIndex < mFolder.length - 1) {
                 mCurrentFolderIndex++;
                 Log.d(TAG, "playNext: Next track playing at index " + mCurrentFolderIndex);
-                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                // Update notification
-                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                if (shuffleOn) {
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(shuffledFolder[mCurrentFolderIndex].getName()));
+                    playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+                } else {
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                    playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "End of folder reached", Toast.LENGTH_LONG).show();
             }
@@ -269,10 +275,17 @@ public class MediaPlayerService extends Service {
         if (mIsPlayingFolder) {
             if (mCurrentFolderIndex > 0) {
                 mCurrentFolderIndex--;
+                if (shuffleOn) {
+                    playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(shuffledFolder[mCurrentFolderIndex].getName()));
+                } else {
+                    playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                }
                 Log.d(TAG, "playPrev: Prev track playing at index " + mCurrentFolderIndex);
-                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                // Update notification
-                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+
             } else {
                 Toast.makeText(getApplicationContext(), "Start of folder reached", Toast.LENGTH_LONG).show();
             }
@@ -351,8 +364,8 @@ public class MediaPlayerService extends Service {
      */
     private ArrayList<String> getFileNames(DocumentFile[] folder) {
         ArrayList<String> adapterData = new ArrayList<>();
-        for (int i = 0; i < folder.length ; i++) {
-            adapterData.add(folder[i].getName());
+        for (DocumentFile documentFile : folder) {
+            adapterData.add(documentFile.getName());
         }
         return adapterData;
     }
