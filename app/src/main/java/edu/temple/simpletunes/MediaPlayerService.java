@@ -1,8 +1,6 @@
 package edu.temple.simpletunes;
 
 import static edu.temple.simpletunes.AppNotificationChannel.CHANNEL_ID;
-import static edu.temple.simpletunes.MainActivity.ADAPTER_DATA;
-import static edu.temple.simpletunes.MainActivity.TRACK_POSITION;
 import static edu.temple.simpletunes.MainActivity.TRACK_FILE_NAME;
 
 import android.app.Notification;
@@ -21,11 +19,12 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * MediaPlayerService is a service created to run the MediaPlayer instance in the background
@@ -37,7 +36,6 @@ public class MediaPlayerService extends Service {
     private final ControlsBinder mControlsBinder = new ControlsBinder();
     private final MediaPlayer mMediaPlayer = new MediaPlayer();
     private final static String TAG = "MEDIAPLAYERSERVICE";
-    public static final String BROADCAST_TRACK_CHANGED = "broadcastTrackChanged";
     public static final int NOTIFICATION_ID = 1;
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
     private DocumentFile[] mFolder; // The folder that should be played
@@ -48,12 +46,9 @@ public class MediaPlayerService extends Service {
     private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
     private Uri currentTrack;
 
-    private Intent broadcastIntent;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        broadcastIntent = new Intent(BROADCAST_TRACK_CHANGED);
         mNotificationManager = getSystemService(NotificationManager.class);
 
         // OnCompletionListener used to play next track in order if mIsPlayingFolder set to true
@@ -177,11 +172,18 @@ public class MediaPlayerService extends Service {
         mMediaPlayer.prepareAsync();
         mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
 
-        if (mIsPlayingFolder) { // Send broadcast using current folder index.
-            broadcastIntent.putExtra(TRACK_POSITION, mCurrentFolderIndex);
-            sendBroadcast(broadcastIntent);
+        // Event bus for MainActivity to receive new track data.
+        if (mIsPlayingFolder) {
+            if (shuffleOn) {
+                EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(shuffledFolder)));
+            } else {
+                EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(mFolder)));
+            }
+        } else { // Send audio file name through event bus if not playing a folder.
+            String path = currentTrack.getPath();
+            String name = path.substring(path.lastIndexOf("/") + 1);
+            EventBus.getDefault().post(new TrackDataChangedEvent(0, name));
         }
-
     }
 
     /**
@@ -337,8 +339,8 @@ public class MediaPlayerService extends Service {
     private boolean shuffle() {
         if (shuffleOn) {
             shuffleOn = false;
-            broadcastIntent.putStringArrayListExtra(ADAPTER_DATA, getFileNames(mFolder));
-            sendBroadcast(broadcastIntent);
+            // Event bus for reordering playlist.
+            EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(mFolder)));
             return false;
         } else if (repeatStatus == 2) {
             Toast.makeText(this, "Can't turn on shuffle when repeating a single file", Toast.LENGTH_SHORT).show();
@@ -347,9 +349,8 @@ public class MediaPlayerService extends Service {
             shuffleOn = true;
             shuffledFolder = Arrays.copyOf(mFolder, mFolder.length);
             Collections.shuffle(Arrays.asList(shuffledFolder));
-
-            broadcastIntent.putStringArrayListExtra(ADAPTER_DATA, getFileNames(shuffledFolder));
-            sendBroadcast(broadcastIntent);
+            // Event bus for reordering playlist.
+            EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(shuffledFolder)));
             return true;
         } else {
             Toast.makeText(this, "Can't shuffle when not playing a folder", Toast.LENGTH_SHORT).show();

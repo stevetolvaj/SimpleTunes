@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -26,17 +24,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String ADAPTER_DATA = "adapterData";
+    private static final String ADAPTER_DATA = "adapterData";
     private final String TAG = "MainActivity";
     private final String REPEAT_STATE_KEY = "repeatState";
     private final String SHUFFLE_STATE_KEY = "shuffleState";
     private final String PLAY_STATE_KEY = "playState";
-    public static final String TRACK_POSITION = "broadcastTrackPosition";
+    public static final String TRACK_POSITION = "trackPosition";
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private ActivityResultLauncher<Intent> folderLauncher;
     public static final String TRACK_FILE_NAME = "trackFileName";
@@ -51,23 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean nightModeState = false;
     private int currentTrackNum = 0;
 
-    /**
-     * The mReceiver field is used to receive the current track number of a folder being played in
-     * the MediaPlayerService
-     */
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            currentTrackNum = intent.getIntExtra(TRACK_POSITION, 0);
-            if (intent.hasExtra(ADAPTER_DATA)) {
-                adapterData.clear();
-                adapterData.addAll(intent.getStringArrayListExtra(ADAPTER_DATA));
-                playlistAdapter.notifyDataSetChanged();
-            }
-            playlistAdapter.setHighlightedPosition(currentTrackNum);
-            Log.d(TAG, "onReceive: adapter data" + intent.getStringArrayListExtra(ADAPTER_DATA));
-        }
-    };
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -145,6 +129,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Event bus register for media player service data changes.
+        EventBus.getDefault().register(this);
+    }
+
     public boolean checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             // Requesting the permission
@@ -179,10 +170,6 @@ public class MainActivity extends AppCompatActivity {
         playlistAdapter = new PlaylistAdapter(this, adapterData, onClickInterface);
         recyclerView.setAdapter(playlistAdapter);
         playlistAdapter.setHighlightedPosition(currentTrackNum);
-
-        // Intent filter for receiving current track num from MediaPlayerService
-        IntentFilter filter = new IntentFilter(MediaPlayerService.BROADCAST_TRACK_CHANGED);
-        registerReceiver(mReceiver, filter);
 
         ImageButton browserButton = findViewById(R.id.browserButton);
         browserButton.setOnClickListener(view -> {
@@ -388,12 +375,6 @@ public class MainActivity extends AppCompatActivity {
             mAudioControlsBinder.play(myUri);
             playState = true;
         }
-        // Update RecyclerView data
-        adapterData.clear();
-        adapterData.add(fileName);
-        playlistAdapter.notifyItemChanged(0);
-        Log.d(TAG, "mediaPlayerPlay: AdapterData" + adapterData.toString());
-
     }
 
     /**
@@ -410,13 +391,6 @@ public class MainActivity extends AppCompatActivity {
             startForegroundService(mServiceIntent);
             mAudioControlsBinder.playFolder(folder);
             playState = true;
-            // update RecyclerView data
-            adapterData.clear();
-            for (DocumentFile file :
-                    folder) {
-                adapterData.add(file.getName());
-            }
-            playlistAdapter.notifyDataSetChanged();
         }
     }
     private int mediaPlayerRepeat(){
@@ -436,10 +410,39 @@ public class MainActivity extends AppCompatActivity {
         return shuffleState;
     }
 
+
+    /**
+     * The handleTrackedDataChange method will be called when either the track position changes
+     * or the playlist is updated in the MediaPlayerService.
+     * @param event The TrackDataChangedEvent object that has changed.
+     *              Contains playlist and current track number.
+     */
+    @Subscribe
+    public void handleTrackDataChange(TrackDataChangedEvent event) {
+
+        currentTrackNum = event.getTrackPosition();
+        playlistAdapter.setHighlightedPosition(currentTrackNum);
+        if (event.getSingleTrack() == null) { // Notify all adapter data changed for folder play.
+            adapterData.clear();
+            adapterData.addAll(event.getTrackList());
+            playlistAdapter.notifyDataSetChanged();
+        } else { // Notify first track played as single.
+            adapterData.clear();
+            adapterData.add(event.getSingleTrack());
+            playlistAdapter.notifyItemChanged(0);
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Event bus register for media player service data changes.
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
