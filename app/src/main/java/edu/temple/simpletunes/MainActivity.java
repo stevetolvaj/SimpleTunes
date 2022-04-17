@@ -372,6 +372,11 @@ public class MainActivity extends AppCompatActivity {
             // Send file name through intent to service for first notification.
             mServiceIntent.putExtra(TRACK_FILE_NAME, fileName);
             startForegroundService(mServiceIntent);
+            // Reset shuffle state after single track is selected.
+            if(isConnected && shuffleState){
+                mediaPlayerShuffle();
+                updateShuffleButton(false);
+            }
             mAudioControlsBinder.play(myUri);
             playState = true;
         }
@@ -389,6 +394,11 @@ public class MainActivity extends AppCompatActivity {
             // Send file name through intent to service for first notification.
             mServiceIntent.putExtra(TRACK_FILE_NAME, name);
             startForegroundService(mServiceIntent);
+            // Reset shuffle state after new folder is selected.
+            if(isConnected && shuffleState){
+                mediaPlayerShuffle();
+                updateShuffleButton(false);
+            }
             mAudioControlsBinder.playFolder(folder);
             playState = true;
         }
