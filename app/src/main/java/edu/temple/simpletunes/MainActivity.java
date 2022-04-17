@@ -24,6 +24,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private final String REPEAT_STATE_KEY = "repeatState";
     private final String SHUFFLE_STATE_KEY = "shuffleState";
     private final String PLAY_STATE_KEY = "playState";
+    public static final String TRACK_POSITION = "trackPosition";
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
     private ActivityResultLauncher<Intent> folderLauncher;
     public static final String TRACK_FILE_NAME = "trackFileName";
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private List<String> adapterData = new ArrayList<>();
     private OnClickInterface onClickInterface;
     private boolean nightModeState = false;
+    private int currentTrackNum = 0;
+
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -95,8 +101,14 @@ public class MainActivity extends AppCompatActivity {
                 if (result.getData() != null) {
                     Uri audioFile = result.getData().getData();
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
+                    // Reset shuffle state after single track is selected.
+                    if(isConnected && shuffleState){
+                        mediaPlayerShuffle();
+                        updateShuffleButton(false);
+                    }
                     mediaPlayerPlay(audioFile);
                     updatePlayButton(true);
+                    currentTrackNum = 0; // Reset returned save instance if selecting new track.
                 }
             }
         });
@@ -113,12 +125,25 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         DocumentFile[] contents = directory.listFiles();
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
+                        // Reset shuffle state after new folder is selected.
+                        if(isConnected && shuffleState){
+                            mediaPlayerShuffle();
+                            updateShuffleButton(false);
+                        }
                         mediaPlayerPlayFolder(contents);
                         updatePlayButton(true);
+                        currentTrackNum = 0; // Reset returned save instance if selecting new track.
                     }
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Event bus register for media player service data changes.
+        EventBus.getDefault().register(this);
     }
 
     public boolean checkPermission(String permission, int requestCode) {
@@ -154,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         playlistAdapter = new PlaylistAdapter(this, adapterData, onClickInterface);
         recyclerView.setAdapter(playlistAdapter);
+        playlistAdapter.setHighlightedPosition(currentTrackNum);
 
         ImageButton browserButton = findViewById(R.id.browserButton);
         browserButton.setOnClickListener(view -> {
@@ -231,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
         playState = savedInstanceState.getBoolean(PLAY_STATE_KEY, false);
         updatePlayButton(playState);
         adapterData = savedInstanceState.getStringArrayList(ADAPTER_DATA);
+        currentTrackNum = savedInstanceState.getInt(TRACK_POSITION, 0);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -240,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putBoolean(SHUFFLE_STATE_KEY, shuffleState);
         outState.putBoolean(PLAY_STATE_KEY, playState);
         outState.putStringArrayList(ADAPTER_DATA, (ArrayList<String>) adapterData);
+        outState.putInt(TRACK_POSITION, currentTrackNum);
         super.onSaveInstanceState(outState);
     }
     private void updateNightMode(){
@@ -354,15 +382,10 @@ public class MainActivity extends AppCompatActivity {
             // Send file name through intent to service for first notification.
             mServiceIntent.putExtra(TRACK_FILE_NAME, fileName);
             startForegroundService(mServiceIntent);
+            // Reset shuffle state after single track is selected.
             mAudioControlsBinder.play(myUri);
             playState = true;
         }
-        // Update RecyclerView data
-        adapterData.clear();
-        adapterData.add(fileName);
-        playlistAdapter.notifyDataSetChanged();
-        Log.d(TAG, "mediaPlayerPlay: AdapterData" + adapterData.toString());
-
     }
 
     /**
@@ -377,15 +400,9 @@ public class MainActivity extends AppCompatActivity {
             // Send file name through intent to service for first notification.
             mServiceIntent.putExtra(TRACK_FILE_NAME, name);
             startForegroundService(mServiceIntent);
+            // Reset shuffle state after new folder is selected.
             mAudioControlsBinder.playFolder(folder);
             playState = true;
-            // update RecyclerView data
-            adapterData.clear();
-            for (DocumentFile file :
-                    folder) {
-                adapterData.add(file.getName());
-            }
-            playlistAdapter.notifyDataSetChanged();
         }
     }
     private int mediaPlayerRepeat(){
@@ -403,6 +420,41 @@ public class MainActivity extends AppCompatActivity {
             shuffleState = false;
         }
         return shuffleState;
+    }
+
+
+    /**
+     * The handleTrackedDataChange method will be called when either the track position changes
+     * or the playlist is updated in the MediaPlayerService.
+     * @param event The TrackDataChangedEvent object that has changed.
+     *              Contains playlist and current track number.
+     */
+    @Subscribe
+    public void handleTrackDataChange(TrackDataChangedEvent event) {
+
+        currentTrackNum = event.getTrackPosition();
+        playlistAdapter.setHighlightedPosition(currentTrackNum);
+        if (event.getSingleTrack() == null) { // Notify all adapter data changed for folder play.
+            adapterData.clear();
+            adapterData.addAll(event.getTrackList());
+            playlistAdapter.notifyDataSetChanged();
+        } else { // Notify first track played as single.
+            adapterData.clear();
+            adapterData.add(event.getSingleTrack());
+            playlistAdapter.notifyItemChanged(0);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Event bus register for media player service data changes.
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
