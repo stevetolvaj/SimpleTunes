@@ -380,7 +380,12 @@ public class MediaPlayerService extends Service {
     private void play(int position) {
         if (mIsPlayingFolder) {
             mCurrentFolderIndex = position;
-            playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            if (shuffleOn) {
+                playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+            } else {
+                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            }
+
             // Update notification
             mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
         } else {

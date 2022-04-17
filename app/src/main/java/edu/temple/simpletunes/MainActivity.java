@@ -101,6 +101,11 @@ public class MainActivity extends AppCompatActivity {
                 if (result.getData() != null) {
                     Uri audioFile = result.getData().getData();
                     Log.d(TAG, "onActivityResult: got URI " + audioFile.toString());
+                    // Reset shuffle state after single track is selected.
+                    if(isConnected && shuffleState){
+                        mediaPlayerShuffle();
+                        updateShuffleButton(false);
+                    }
                     mediaPlayerPlay(audioFile);
                     updatePlayButton(true);
                     currentTrackNum = 0; // Reset returned save instance if selecting new track.
@@ -120,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         DocumentFile[] contents = directory.listFiles();
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
+                        // Reset shuffle state after new folder is selected.
+                        if(isConnected && shuffleState){
+                            mediaPlayerShuffle();
+                            updateShuffleButton(false);
+                        }
                         mediaPlayerPlayFolder(contents);
                         updatePlayButton(true);
                         currentTrackNum = 0; // Reset returned save instance if selecting new track.
