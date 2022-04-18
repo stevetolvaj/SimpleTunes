@@ -103,4 +103,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/libraryButton" />
 
+    <TextView
+        android:id="@+id/artistTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/repeatButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/skipPrevButton"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+        tools:text="Artist" />
+
+    <TextView
+        android:id="@+id/trackNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/repeatButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/skipPrevButton"
+        app:layout_constraintTop_toBottomOf="@+id/artistTextView"
+        tools:text="Track Name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

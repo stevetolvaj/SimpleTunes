@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private OnClickInterface onClickInterface;
     private boolean nightModeState = false;
     private int currentTrackNum = 0;
-
+    private MusicTrack[] currentFolder;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -124,17 +124,22 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onActivityResult: got empty directory");
                     }else{
                         DocumentFile[] contents = directory.listFiles();
-                        MusicTrack[] folder = new MusicTrack[contents.length];
+                        ArrayList<MusicTrack> list = new ArrayList<>();
                         for(int i = 0; i < contents.length; i++){
-                            folder[i] = new MusicTrack(MainActivity.this, contents[i]);
+                            MusicTrack m = new MusicTrack(MainActivity.this, contents[i]);
+                            if(m.getTitle() != null){
+                                list.add(m);
+                            }
                         }
+                        currentFolder = new MusicTrack[list.size()];
+                        currentFolder = list.toArray(currentFolder);
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
                         // Reset shuffle state after new folder is selected.
                         if(isConnected && shuffleState){
                             mediaPlayerShuffle();
                             updateShuffleButton(false);
                         }
-                        mediaPlayerPlayFolder(folder);
+                        mediaPlayerPlayFolder(currentFolder);
                         updatePlayButton(true);
                         currentTrackNum = 0; // Reset returned save instance if selecting new track.
                     }
