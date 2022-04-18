@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean nightModeState = false;
     private int currentTrackNum = 0;
     private MusicTrack[] currentFolder;
+    private TextView artistTextview;
+    private TextView trackNameTextView;
 
     // Variables and initialization of MediaPlayerService service connection.
     // TODO: use functions available through mAudioControlsBinder to control media.
@@ -153,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Event bus register for media player service data changes.
         EventBus.getDefault().register(this);
+        artistTextview = findViewById(R.id.artistTextView);
+        trackNameTextView = findViewById(R.id.trackNameTextView);
     }
 
     public boolean checkPermission(String permission, int requestCode) {
@@ -343,6 +348,10 @@ public class MainActivity extends AppCompatActivity {
             playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72);
         }
     }
+    private void updateTextViews(){
+        artistTextview.setText(currentFolder[currentTrackNum].getArtist());
+        trackNameTextView.setText(currentFolder[currentTrackNum].getTitle());
+    }
     /**
      * The mediaPlayerPrev method is used to skip to the previously played track in the file.
      */
@@ -452,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
             adapterData.add(event.getSingleTrack());
             playlistAdapter.notifyItemChanged(0);
         }
+        updateTextViews();
     }
 
     @Override
