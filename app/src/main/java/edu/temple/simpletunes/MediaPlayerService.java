@@ -362,10 +362,10 @@ public class MediaPlayerService extends Service {
      * @param folder The DocumentFile array
      * @return The String ArrayList of filenames.
      */
-    private ArrayList<String> getFileNames(DocumentFile[] folder) {
+    private ArrayList<String> getFileNames(MusicTrack[] folder) {
         ArrayList<String> adapterData = new ArrayList<>();
-        for (DocumentFile documentFile : folder) {
-            adapterData.add(documentFile.getName());
+        for (MusicTrack track : folder) {
+            adapterData.add(track.getName());
         }
         return adapterData;
     }
