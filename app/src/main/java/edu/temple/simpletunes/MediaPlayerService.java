@@ -19,7 +19,10 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -46,7 +49,6 @@ public class MediaPlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mNotificationManager = getSystemService(NotificationManager.class);
 
         // OnCompletionListener used to play next track in order if mIsPlayingFolder set to true
@@ -121,6 +123,7 @@ public class MediaPlayerService extends Service {
     /**
      * The getNotification method creates a Notification object using the builder and
      * a pending intent attached to the notification.
+     *
      * @param description The track name or description to display
      * @return The Notification object
      */
@@ -168,6 +171,19 @@ public class MediaPlayerService extends Service {
         }
         mMediaPlayer.prepareAsync();
         mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
+
+        // Event bus for MainActivity to receive new track data.
+        if (mIsPlayingFolder) {
+            if (shuffleOn) {
+                EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(shuffledFolder)));
+            } else {
+                EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(mFolder)));
+            }
+        } else { // Send audio file name through event bus if not playing a folder.
+            String path = currentTrack.getPath();
+            String name = path.substring(path.lastIndexOf("/") + 1);
+            EventBus.getDefault().post(new TrackDataChangedEvent(0, name));
+        }
     }
 
     /**
@@ -212,6 +228,7 @@ public class MediaPlayerService extends Service {
 
     /**
      * The isPlaying method checks if the current audio file is playing.
+     *
      * @return True if playing or false if not.
      */
     private boolean isPlaying() {
@@ -234,9 +251,15 @@ public class MediaPlayerService extends Service {
             if(mCurrentFolderIndex < mFolder.length - 1) {
                 mCurrentFolderIndex++;
                 Log.d(TAG, "playNext: Next track playing at index " + mCurrentFolderIndex);
-                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                // Update notification
-                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                if (shuffleOn) {
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(shuffledFolder[mCurrentFolderIndex].getName()));
+                    playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+                } else {
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                    playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "End of folder reached", Toast.LENGTH_LONG).show();
             }
@@ -253,10 +276,17 @@ public class MediaPlayerService extends Service {
         if(mIsPlayingFolder) {
             if(mCurrentFolderIndex > 0) {
                 mCurrentFolderIndex--;
+                if (shuffleOn) {
+                    playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(shuffledFolder[mCurrentFolderIndex].getName()));
+                } else {
+                    playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+                    // Update notification
+                    mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+                }
                 Log.d(TAG, "playPrev: Prev track playing at index " + mCurrentFolderIndex);
-                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
-                // Update notification
-                mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
+
             } else {
                 Toast.makeText(getApplicationContext(), "Start of folder reached", Toast.LENGTH_LONG).show();
             }
@@ -264,8 +294,15 @@ public class MediaPlayerService extends Service {
             Toast.makeText(getApplicationContext(), "Not playing a folder", Toast.LENGTH_LONG).show();
         }
     }
-    private int repeat(){
-        switch (repeatStatus){
+
+    /**
+     * The repeat method will set the MediaPlayerService into a mode where each track or folder
+     * is repeated upon completion.
+     *
+     * @return The current repeat status can be 0 = no repeat, 1 = folder repeat, 2 = file repeat.
+     */
+    private int repeat() {
+        switch (repeatStatus) {
             case 0:
                 if(mIsPlayingFolder){
                     repeatStatus = 1;
@@ -292,9 +329,17 @@ public class MediaPlayerService extends Service {
         }
         return repeatStatus;
     }
-    private boolean shuffle(){
-        if(shuffleOn){
+
+    /**
+     * The shuffle method will re-order the folder that is being played into a random order.
+     *
+     * @return The state of shuffle being on or off.
+     */
+    private boolean shuffle() {
+        if (shuffleOn) {
             shuffleOn = false;
+            // Event bus for reordering playlist.
+            EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(mFolder)));
             return false;
         }else if(repeatStatus == 2){
             Toast.makeText(this, "Can't turn on shuffle when repeating a single file", Toast.LENGTH_SHORT).show();
@@ -303,6 +348,8 @@ public class MediaPlayerService extends Service {
             shuffleOn = true;
             shuffledFolder = Arrays.copyOf(mFolder, mFolder.length);
             Collections.shuffle(Arrays.asList(shuffledFolder));
+            // Event bus for reordering playlist.
+            EventBus.getDefault().post(new TrackDataChangedEvent(mCurrentFolderIndex, getFileNames(shuffledFolder)));
             return true;
         }else{
             Toast.makeText(this, "Can't shuffle when not playing a folder", Toast.LENGTH_SHORT).show();
@@ -311,14 +358,33 @@ public class MediaPlayerService extends Service {
     }
 
     /**
+     * The getFileNames method used to return a string array of the filenames.
+     * @param folder The DocumentFile array
+     * @return The String ArrayList of filenames.
+     */
+    private ArrayList<String> getFileNames(DocumentFile[] folder) {
+        ArrayList<String> adapterData = new ArrayList<>();
+        for (DocumentFile documentFile : folder) {
+            adapterData.add(documentFile.getName());
+        }
+        return adapterData;
+    }
+
+    /**
      * The play method plays a track at a specific position if a Uri has been loaded into
      * the MediaPlayerService first.
+     *
      * @param position The position or the single track to play if not a folder.
      */
     private void play(int position) {
         if (mIsPlayingFolder) {
             mCurrentFolderIndex = position;
-            playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            if (shuffleOn) {
+                playSingleTrack(shuffledFolder[mCurrentFolderIndex].getUri());
+            } else {
+                playSingleTrack(mFolder[mCurrentFolderIndex].getUri());
+            }
+
             // Update notification
             mNotificationManager.notify(NOTIFICATION_ID, getNotification(mFolder[mCurrentFolderIndex].getName()));
         } else {
@@ -331,7 +397,7 @@ public class MediaPlayerService extends Service {
     }
 
     /**
-     * Class to control media player instance.
+     * Class to control media player instance through a Binder.
      */
     public class ControlsBinder extends Binder {
         public void play(Uri uri) {
@@ -349,20 +415,28 @@ public class MediaPlayerService extends Service {
         public void pause() {
             MediaPlayerService.this.pause();
         }
-        
-        public void resume() { MediaPlayerService.this.resume();}
+
+        public void resume() {
+            MediaPlayerService.this.resume();
+        }
 
         public void playFolder (MusicTrack[] folder){
             MediaPlayerService.this.playFolder(folder);
         }
 
-        public void playNext(){ MediaPlayerService.this.playNext();}
+        public void playNext() {
+            MediaPlayerService.this.playNext();
+        }
 
-        public void playPrev(){ MediaPlayerService.this.playPrev();}
-        public int repeat(){
+        public void playPrev() {
+            MediaPlayerService.this.playPrev();
+        }
+
+        public int repeat() {
             return MediaPlayerService.this.repeat();
         }
-        public boolean shuffle(){
+
+        public boolean shuffle() {
             return MediaPlayerService.this.shuffle();
         }
 
@@ -370,7 +444,8 @@ public class MediaPlayerService extends Service {
             return MediaPlayerService.this;
         }
 
-        public void play(int position) { MediaPlayerService.this.play(position);
+        public void play(int position) {
+            MediaPlayerService.this.play(position);
         }
     }
 
