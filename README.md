@@ -11,10 +11,10 @@ Simple Tunes is an android application that lets users listen to various music f
 
 ## For Android Devices and Emulated Android Devices:
 
-- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.3.0. Then download the apk file
+- Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.5.0. Then download the apk file
 
 - Open the Settings app and search for the word "unknown".
-- <img src="https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png" width="300" height="600">
+<img src="https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png" width="300" height="600">
 
 - Select that and then select the item that that brings you to.
 
@@ -22,7 +22,7 @@ Simple Tunes is an android application that lets users listen to various music f
 
 - This will bring you to the following screen
  
- <img src="https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png" width="300" height="600">
+<img src="https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png" width="300" height="600">
  
 - Select Chrome, then toggle "Allow from this source"
  
@@ -92,9 +92,7 @@ Simple Tunes is an android application that lets users listen to various music f
 
 -You can now also shuffle through the songs if playing a folder
 
-- The user can click the repeat button to repeat the current song playing or click it again to repeat the whole folder when it's finished
-
--Changing UI coming soon!
+-The user can click the repeat button to repeat the folder if in folder mode, or click it again to repeat the current song playing
 
 -To listen to a different downloaded mp3 file or repeat the song just click on the song button at the top left once again!
 
@@ -105,6 +103,8 @@ Simple Tunes is an android application that lets users listen to various music f
 -Custom Playlist
 
 -Download music directly through the app by providing a link
+
+-Have buttons show visual feedback
 
 # How to contribute
 Follow this project board to know the latest status of the project: https://github.com/cis3296s22/SimpleTunes/projects/1
