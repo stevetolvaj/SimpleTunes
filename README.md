@@ -14,7 +14,8 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 - Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.3.0. Then download the apk file
 
 - Open the Settings app and search for the word "unknown".
-- ![image](https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png = 50x50)
+- ![image](https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png)
+- <img src="https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.pnge" width="100" height="100">
 - Select that and then select the item that that brings you to.
 - ![image](https://user-images.githubusercontent.com/58083363/160680681-0652ebe0-d2a4-45fc-ab8b-9f4bc7b8c470.png)
 - This will bring you to the following screen
