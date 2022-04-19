@@ -29,7 +29,7 @@ Simple Tunes is an android application that lets users listen to various music f
 
 - The app will now run when selected
 
--![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
+
 <img src="https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG" width="300" height="600">
 
 
