@@ -63,7 +63,6 @@ Simple Tunes is an android application that lets users listen to various music f
 
 - Go to this link and download the mp3 file: http://teknoaxe.com/direct_download.php?file=Piccolo_and_a_Cane.mp3
 
-![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
 <img src="https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG" width="300" height="600">
 
 
@@ -72,7 +71,6 @@ Simple Tunes is an android application that lets users listen to various music f
 - After clicking the button shown above you will be prompted to agree to an external storage permission. Please agree to the permission
 
 
-![selectdownloads](https://user-images.githubusercontent.com/89646919/160629499-ba63b6eb-7ea2-4f3d-8f98-a8814b2114e8.PNG)
 <img src="https://user-images.githubusercontent.com/89646919/160629499-ba63b6eb-7ea2-4f3d-8f98-a8814b2114e8.PNG" width="300" height="600">
 
 
