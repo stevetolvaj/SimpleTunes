@@ -52,7 +52,6 @@ Simple Tunes is an android application that lets users listen to various music f
 - You should now click create device. Then you will be prompted with a list of devices. Click the pixel 2. After that select release name R, API 30. Finally the next screen should let you click finish. After that you will be shown the same screen where you clicked create device except now your pixel 3 will be listed. 
 
 ![final](https://user-images.githubusercontent.com/89646919/160636150-3dbf4eb7-9ca8-4a51-9950-5b50ee87b550.PNG)
-<img src="https://user-images.githubusercontent.com/89646919/160636150-3dbf4eb7-9ca8-4a51-9950-5b50ee87b550.PNG" width="300" height="600">
 
 
 - Make sure the top of your window matches the above picture. Then click device file explorer on the bottom right of your screen.
