@@ -23,6 +23,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -112,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
      * The current track number being played.
      */
     private int currentTrackNum = 0;
+    private MusicTrack[] currentFolder;
+    private TextView artistTextview;
+    private TextView trackNameTextView;
     /**
      * The connection state of the MediaPlayerService.
      */
@@ -186,13 +190,22 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onActivityResult: got empty directory");
                     }else{
                         DocumentFile[] contents = directory.listFiles();
+                        ArrayList<MusicTrack> list = new ArrayList<>();
+                        for(int i = 0; i < contents.length; i++){
+                            MusicTrack m = new MusicTrack(MainActivity.this, contents[i]);
+                            if(m.getIsAudio()){
+                                list.add(m);
+                            }
+                        }
+                        currentFolder = new MusicTrack[list.size()];
+                        currentFolder = list.toArray(currentFolder);
                         Log.d(TAG, "onCreate: Folder passed to MediaPlayerService. Items in folder: " + contents.length);
                         // Reset shuffle state after new folder is selected.
                         if(isConnected && shuffleState){
                             mediaPlayerShuffle();
                             updateShuffleButton(false);
                         }
-                        mediaPlayerPlayFolder(contents);
+                        mediaPlayerPlayFolder(currentFolder);
                         updatePlayButton(true);
                         currentTrackNum = 0; // Reset returned save instance if selecting new track.
                     }
@@ -210,6 +223,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Event bus register for media player service data changes.
         EventBus.getDefault().register(this);
+        artistTextview = findViewById(R.id.artistTextView);
+        trackNameTextView = findViewById(R.id.trackNameTextView);
     }
 
     /**
@@ -450,6 +465,10 @@ public class MainActivity extends AppCompatActivity {
             playPauseButton.setImageResource(R.drawable.ic_baseline_play_circle_outline_72);
         }
     }
+    private void updateTextViews(){
+        artistTextview.setText(currentFolder[currentTrackNum].getArtist());
+        trackNameTextView.setText(currentFolder[currentTrackNum].getTitle());
+    }
     /**
      * The mediaPlayerPrev method is used to skip to the previously played track in the file.
      */
@@ -511,8 +530,8 @@ public class MainActivity extends AppCompatActivity {
      * last file is completed playing.
      * @param folder The DocumentFile array to play all audio files from.
      */
-    private void mediaPlayerPlayFolder(DocumentFile[] folder) {
-        Arrays.sort(folder, new DocumentFileComparator());
+    private void mediaPlayerPlayFolder(MusicTrack[] folder) {
+        Arrays.sort(folder, new MusicTrackComparator());
         String name = folder[0].getName();
         if (isConnected) {
             // Send file name through intent to service for first notification.
@@ -571,6 +590,7 @@ public class MainActivity extends AppCompatActivity {
             adapterData.add(event.getSingleTrack());
             playlistAdapter.notifyItemChanged(0);
         }
+        updateTextViews();
     }
 
     /**

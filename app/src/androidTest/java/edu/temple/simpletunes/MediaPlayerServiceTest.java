@@ -75,9 +75,9 @@ public class MediaPlayerServiceTest {
 
     @Test
     public void testRepeatStatusFolder() {
-        DocumentFile[] folder = new DocumentFile[2];
-        folder[0] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
-        folder[1] = DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath()));
+        MusicTrack[] folder = new MusicTrack[2];
+        folder[0] = new MusicTrack(null, DocumentFile.fromFile(new File(Settings.System.DEFAULT_NOTIFICATION_URI.getPath())));
+        folder[1] = new MusicTrack(null, DocumentFile.fromFile(new File(Settings.System.DEFAULT_ALARM_ALERT_URI.getPath())));
         ((MediaPlayerService.ControlsBinder) binder).playFolder(folder);
 
         int status = ((MediaPlayerService.ControlsBinder) binder).repeat();
