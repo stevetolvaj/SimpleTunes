@@ -1,0 +1,23 @@
+title Pausing an already playing song
+
+actor User
+participant ":MainActivity" as main
+
+participant ":MusicPlayerService" as player
+activate player
+activate User
+User->>main:Press pause/play button
+activate main
+main->>main:mediaPlayerPauseOrPlay()
+main->>player:isPlaying()
+
+player-->main:True
+main->>player:pause()
+
+deactivate main
+player->>player:pause()
+
+
+deactivate player
+deactivate User
+space
