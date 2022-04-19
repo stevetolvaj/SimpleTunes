@@ -21,16 +21,18 @@ public class MusicTrack {
         String type = df.getType();
         if(type != null){
         type = type.substring(0, type.lastIndexOf('/'));
-            if(type.equals("audio")){
+            if(type.equals("audio") && df.isFile()){
                 this.df = df;
                 MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                 mmr.setDataSource(ctx, df.getUri());
                 title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 String s = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
-                if(s.lastIndexOf('/') == -1){
+                if(s != null && s.lastIndexOf('/') == -1){
                     track = s;
-                }else{
+                }else if(s != null){
                     track = s.substring(0, s.lastIndexOf('/'));
+                }else{
+                    track = null;
                 }
                 artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                 album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
