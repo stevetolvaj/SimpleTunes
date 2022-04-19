@@ -15,7 +15,7 @@ Simple Tunes is an android application that lets users listen to various music f
 
 - Open the Settings app and search for the word "unknown".
 - ![image](https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png)
-- <img src="(https://user-images.githubusercontent.com/89646919/164014711-4d453233-208d-4857-92de-98ca98054c14.png)" width="300" height="300">
+- <img src="https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png" width="100" height="100">
 - Select that and then select the item that that brings you to.
 - ![image](https://user-images.githubusercontent.com/58083363/160680681-0652ebe0-d2a4-45fc-ab8b-9f4bc7b8c470.png)
 - This will bring you to the following screen
@@ -79,6 +79,8 @@ Simple Tunes is an android application that lets users listen to various music f
 -Select a folder to play by clicking on the button at the top of the screen that shows the multiple files icon
 
 -Use the previous and next buttons to navigate through tracks that are being played from a folder.
+
+-You can now 
 
 -Changing UI coming soon!
 
