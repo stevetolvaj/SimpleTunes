@@ -13,6 +13,9 @@ import android.os.Build;
 public class AppNotificationChannel extends Application {
     public static final String CHANNEL_ID = "mediaPlayerServiceChannel";
 
+    /**
+     *
+     */
     @Override
     public void onCreate() {
         super.onCreate();

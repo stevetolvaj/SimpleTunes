@@ -33,19 +33,59 @@ import java.util.Collections;
 
 public class MediaPlayerService extends Service {
 
+    /**
+     * The binder used to control the service.
+     */
     private final ControlsBinder mControlsBinder = new ControlsBinder();
+    /**
+     * The MediaPlayer api used to play tracks within the service.
+     */
     private final MediaPlayer mMediaPlayer = new MediaPlayer();
+    /**
+     * Tag for the service.
+     */
     private final static String TAG = "MEDIAPLAYERSERVICE";
+    /**
+     * ID used for the notification.
+     */
     public static final int NOTIFICATION_ID = 1;
+    /**
+     * The state of a folder being played.
+     */
     private boolean mIsPlayingFolder = false;   // Shows if folder is playing continuously
+    /**
+     * The original folder used for the playlist.
+     */
     private MusicTrack[] mFolder; // The folder that should be played
+    /**
+     * The shuffled folder for the playlist.
+     */
     private MusicTrack[] shuffledFolder;
+    /**
+     * The current index of a track being played within a folder.
+     */
     private int mCurrentFolderIndex = 0;   // The index of the next song to be played in folder
+    /**
+     * The notification manager for the foreground notification.
+     */
     private NotificationManager mNotificationManager;
+    /**
+     * The current state of shuffle in a playlist.
+     */
     private boolean shuffleOn = false;
-    private int repeatStatus = 0; //0 = no repeat, 1 = folder repeat, 2 = file repeat
+    /**
+     * The repeat status, 0 = no repeat, 1 = folder repeat, 2 = file repeat
+     */
+    private int repeatStatus = 0;
+    /**
+     * The current track's Uri that is being played.
+     */
     private Uri currentTrack;
 
+    /**
+     * The onCreate method is called when the service is started and is used to control playback
+     * when a track is completed.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -113,6 +153,14 @@ public class MediaPlayerService extends Service {
         });
     }
 
+    /**
+     * The onStartCommand is called after onCreate and is used to set the service as a foreground
+     * service.
+     * @param intent The intent passed from the MainActivity.
+     * @param flags Specific flags used for starting the service.
+     * @param startId The ID used to start the service.
+     * @return That status of the service starting.
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(NOTIFICATION_ID, getNotification(intent.getStringExtra(TRACK_FILE_NAME)));
@@ -140,6 +188,11 @@ public class MediaPlayerService extends Service {
                 .build();
     }
 
+    /**
+     * The onBind method is used to bind the ControlBinder to the activity that started it.
+     * @param intent The intent for specifying which activity it is bound to.
+     * @return The binder for this service.
+     */
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind: MediaPlayerService");
@@ -400,55 +453,94 @@ public class MediaPlayerService extends Service {
      * Class to control media player instance through a Binder.
      */
     public class ControlsBinder extends Binder {
+        /**
+         * {@link MediaPlayerService#play(Uri)}
+         */
         public void play(Uri uri) {
             MediaPlayerService.this.play(uri);
         }
 
+        /**
+         * {@link MediaPlayerService#isPlaying()}
+         */
         public boolean isPlaying() {
             return MediaPlayerService.this.isPlaying();
         }
 
+        /**
+         * {@link MediaPlayerService#stop()}
+         */
         public void stop() {
             MediaPlayerService.this.stop();
         }
 
+        /**
+         * {@link MediaPlayerService#pause()}
+         */
         public void pause() {
             MediaPlayerService.this.pause();
         }
 
+        /**
+         * {@link MediaPlayerService#resume()}
+         */
         public void resume() {
             MediaPlayerService.this.resume();
         }
-
+        /**
+         * {@link MediaPlayerService#playFolder(DocumentFile[])}
+         */
         public void playFolder (MusicTrack[] folder){
             MediaPlayerService.this.playFolder(folder);
         }
-
+        /**
+         * {@link MediaPlayerService#playNext()}
+         */
         public void playNext() {
             MediaPlayerService.this.playNext();
         }
 
+        /**
+         * {@link MediaPlayerService#playPrev()}
+         */
         public void playPrev() {
             MediaPlayerService.this.playPrev();
         }
 
+        /**
+         * {@link MediaPlayerService#repeat()}
+         */
         public int repeat() {
             return MediaPlayerService.this.repeat();
         }
 
+        /**
+         * {@link MediaPlayerService#shuffle()}
+         */
         public boolean shuffle() {
             return MediaPlayerService.this.shuffle();
         }
 
+        /**
+         * The getService method returns the current service class.
+         * @return The MediaPlayerService.
+         */
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
 
+        /**
+         * {@link MediaPlayerService#play(int)}
+         */
         public void play(int position) {
             MediaPlayerService.this.play(position);
         }
     }
 
+    /**
+     * The onDestroy method is called before the service is destroyed and releases
+     * the MediaPlayer from running in the background.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();

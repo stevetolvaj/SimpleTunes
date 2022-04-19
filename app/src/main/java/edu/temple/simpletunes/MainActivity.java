@@ -32,34 +32,93 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The MainActivity class is used to control the UI in the application and start the
+ * MediaPlayerService.
+ */
 public class MainActivity extends AppCompatActivity {
+    /**
+     * Tag used for PlayListAdapterData.
+     */
     private static final String ADAPTER_DATA = "adapterData";
+    /**
+     * Tag used for MainActivity.
+     */
     private final String TAG = "MainActivity";
+    /**
+     * Tag used for repeatState.
+     */
     private final String REPEAT_STATE_KEY = "repeatState";
+    /**
+     * Tag used for ShuffleState.
+     */
     private final String SHUFFLE_STATE_KEY = "shuffleState";
+    /**
+     * Tag used for playState.
+     */
     private final String PLAY_STATE_KEY = "playState";
+    /**
+     * Tag used for trackPosition.
+     */
     public static final String TRACK_POSITION = "trackPosition";
+    /**
+     * Used to launch the system file browser for single track play.
+     */
     private ActivityResultLauncher<Intent> mActivityResultLauncher;
+    /**
+     * Used to launch the system file browser for folder play.
+     */
     private ActivityResultLauncher<Intent> folderLauncher;
+    /**
+     * Tag used for trackFileName
+     */
     public static final String TRACK_FILE_NAME = "trackFileName";
+    /**
+     * Used to store the storage permission code 101.
+     */
     private static final int STORAGE_PERMISSION_CODE = 101;
+    /**
+     * The intent used to start the MediaPlayerService.
+     */
     private Intent mServiceIntent;
+    /**
+     * The state of repeat for folder or tracks.
+     */
     private int repeatState = 0;
+    /**
+     * The state of shuffle, 0 = no repeat, 1 = folder repeat, 2 = file repeat.
+     */
     private boolean shuffleState = false;
+    /**
+     * The state showing if a track is playing.
+     */
     private boolean playState = false;
+    /**
+     * The playListAdapter used for the RecyclerView.
+     */
     private PlaylistAdapter playlistAdapter;
+    /**
+     * The list used to populate the RecyclerView.
+     */
     private List<String> adapterData = new ArrayList<>();
+    /**
+     * The interface used to track which position is clicked within the RecyclerView.
+     */
     private OnClickInterface onClickInterface;
+    /**
+     * The current state of the system night mode.
+     */
     private boolean nightModeState = false;
+    /**
+     * The current track number being played.
+     */
     private int currentTrackNum = 0;
     private MusicTrack[] currentFolder;
     private TextView artistTextview;
     private TextView trackNameTextView;
-
-    // Variables and initialization of MediaPlayerService service connection.
-    // TODO: use functions available through mAudioControlsBinder to control media.
-    // mMediaControlsBinder.play, pause, resume, stop, isPlaying.
-    // resume and pause does not check if track is playing or already paused.
+    /**
+     * The connection state of the MediaPlayerService.
+     */
     private boolean isConnected = false;
     private MediaPlayerService.ControlsBinder mAudioControlsBinder;
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -75,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * The onCreate method is called when the activity is started.
+     * @param savedInstanceState The Bundle that was previously destroyed or null if first start.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +214,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * The onStart method is called after the activity is created and is used to register
+     * the EventBus.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -160,6 +227,12 @@ public class MainActivity extends AppCompatActivity {
         trackNameTextView = findViewById(R.id.trackNameTextView);
     }
 
+    /**
+     * The checkPermission function is used to check what permissions have been granted previously.
+     * @param permission The permission to check.
+     * @param requestCode The requestCode of the permission being checked.
+     * @return True if permission is granted and false otherwise.
+     */
     public boolean checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             // Requesting the permission
@@ -171,6 +244,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * The onRequestPermissionResult method is called to verify permission was granted to
+     * access storage on the device.
+     * @param requestCode The code relating to permission storage.
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The results of the permission granted. Never null.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -185,6 +265,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * The onResume method is called after the activity is created and used to initialize
+     * and control the UI elements.
+     */
     @Override
     protected void onResume() {
         // Initialize the RecyclerView variables.
@@ -262,6 +346,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    /**
+     * The onRestoreInstanceState is called before the activity is resumed and sets instance
+     * variables back to previous state.
+     * @param savedInstanceState The bundle containing saved instance variables.
+     */
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         repeatState = savedInstanceState.getInt(REPEAT_STATE_KEY, 0);
@@ -275,6 +364,11 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    /**
+     * The onSavedInstanceState method is called before the activity is destroyed to save any
+     * variables that are needed after onCreate on restart.
+     * @param outState The bundle containing instance variables.
+     */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt(REPEAT_STATE_KEY, repeatState);
@@ -284,6 +378,11 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(TRACK_POSITION, currentTrackNum);
         super.onSaveInstanceState(outState);
     }
+
+    /**
+     * The updateNightMode method will set the nightModeState variable to true or false
+     * if the system night mode is active.
+     */
     private void updateNightMode(){
         // https://stackoverflow.com/questions/44170028/android-how-to-detect-if-night-mode-is-on-when-using-appcompatdelegate-mode-ni
         int nightModeFlags = getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
@@ -293,6 +392,12 @@ public class MainActivity extends AppCompatActivity {
             nightModeState = false;
         }
     }
+
+    /**
+     * The updateRepeatButton method sets the image resource according to night mode being on/off
+     * and if the media player is currently in a repeat state.
+     * @param status The current state of repeat.
+     */
     private void updateRepeatButton(int status){
         updateNightMode();
         ImageButton repeatButton = findViewById(R.id.repeatButton);
@@ -322,6 +427,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    /**
+     * The updateShuffleButton method sets the image resource according to night mode being on/off
+     * and if the playlist is currently in a shuffle state.
+     * @param status The current state of the shuffle.
+     */
     private void updateShuffleButton(boolean status){
         updateNightMode();
         ImageButton shuffleButton = findViewById(R.id.shuffleButton);
@@ -335,6 +446,12 @@ public class MainActivity extends AppCompatActivity {
             shuffleButton.setImageResource(R.drawable.ic_baseline_shuffle_48);
         }
     }
+
+    /**
+     * The updatePlayButton method sets the image resource according to night mode being on/off
+     * and if the track is currently playing.
+     * @param isPlaying The current state of the track.
+     */
     private void updatePlayButton(boolean isPlaying){
         updateNightMode();
         ImageButton playPauseButton = findViewById(R.id.playPauseButton);
@@ -372,6 +489,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The mediaPlayerPauseOrStart method is used to pause the current track or start from the
      * paused position. Checks if service is bound first.
+     *
+     * @return True if the media is playing, false otherwise.
      */
     private boolean mediaPlayerPauseOrStart() {
         if (isConnected) {
@@ -423,6 +542,11 @@ public class MainActivity extends AppCompatActivity {
             playState = true;
         }
     }
+
+    /**
+     * The mediaPlayerRepeat method sets the MediaPlayerService into repeat mode.
+     * @return The state of the repeat, 0 = no repeat, 1 = folder repeat, 2 = file repeat.
+     */
     private int mediaPlayerRepeat(){
         if(isConnected){
             repeatState = mAudioControlsBinder.repeat();
@@ -431,6 +555,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return repeatState;
     }
+
+    /**
+     * The mediaPlayerShuffle method is used to set the mediaPlayerService shuffle state.
+     * @return True if shuffle is on and false otherwise.
+     */
     private boolean mediaPlayerShuffle(){
         if(isConnected){
             shuffleState = mAudioControlsBinder.shuffle();
@@ -464,11 +593,10 @@ public class MainActivity extends AppCompatActivity {
         updateTextViews();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
+    /**
+     * The onStop method is called before the activity is stopped and used to unregister the
+     * EventBus.
+     */
     @Override
     protected void onStop() {
         super.onStop();
@@ -476,6 +604,10 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    /**
+     * The onDestroy method is called before the activity is destroyed and used to unbind
+     * and stop the service.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -489,6 +621,10 @@ public class MainActivity extends AppCompatActivity {
      * playlistAdapter.
      */
     public interface OnClickInterface {
+        /**
+         * The position method is used to determine position of the item clicked.
+         * @param position The position in the list.
+         */
         void itemClicked(int position);
     }
 }
