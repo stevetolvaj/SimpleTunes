@@ -22,7 +22,8 @@ Simple Tunes is an android application that lets users listen to various music f
  <img src="https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png" width="300" height="600">
  
 - Select Chrome, then toggle "Allow from this source"
-- <img src="https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.png" width="300" height="600">
+ 
+<img src="https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.png" width="300" height="600">
 
 - The app will now be installed in your device apps 
 
