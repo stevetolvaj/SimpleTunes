@@ -27,6 +27,8 @@ Simple Tunes is an android application that lets users listen to .mp3 files on t
 - The app will now run when selected
 
 -![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
+![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG =250x250)
+
 -Click the button shown above
 
 ## For Running on Android Studio: 
