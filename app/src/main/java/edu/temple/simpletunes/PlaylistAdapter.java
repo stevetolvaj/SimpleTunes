@@ -19,9 +19,21 @@ import java.util.List;
  */
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
+    /**
+     * The list of track names to show in the RecyclerView.
+     */
     private List<String> trackNames;
+    /**
+     * The context of the application.
+     */
     private final Context mContext;
+    /**
+     * The interface used to return the position selected in the view.
+     */
     private final MainActivity.OnClickInterface mOnClickInterface;
+    /**
+     * The position of the item that should be highlight within the view.
+     */
     private int highlightedPosition = 0;
 
     /**
@@ -76,7 +88,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         this.mOnClickInterface = onClickInterface;
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * {@inheritDoc}
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -87,6 +101,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         // Get element from your dataset at this position and replace the
@@ -119,6 +136,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         this.notifyItemChanged(position);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getItemCount() {
         return trackNames.size();
