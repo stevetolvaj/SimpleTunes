@@ -22,7 +22,6 @@ Simple Tunes is an android application that lets users listen to various music f
  <img src="https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png" width="300" height="600">
  
 - Select Chrome, then toggle "Allow from this source"
-- ![image](https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.png)
 - <img src="https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.png" width="300" height="600">
 
 - The app will now be installed in your device apps 
@@ -65,7 +64,7 @@ Simple Tunes is an android application that lets users listen to various music f
 - Go to this link and download the mp3 file: http://teknoaxe.com/direct_download.php?file=Piccolo_and_a_Cane.mp3
 
 ![homepageAPP](https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG)
-<img src="https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.pngg" width="300" height="600">
+<img src="https://user-images.githubusercontent.com/89646919/160608948-0ca0085c-5867-4b89-810d-70107caaf4b4.PNG" width="300" height="600">
 
 
 - Now go back into the application and click on the button at the top left 
@@ -74,7 +73,7 @@ Simple Tunes is an android application that lets users listen to various music f
 
 
 ![selectdownloads](https://user-images.githubusercontent.com/89646919/160629499-ba63b6eb-7ea2-4f3d-8f98-a8814b2114e8.PNG)
-<img src="https://user-images.githubusercontent.com/58083363/160680985-3aea2cce-56f3-4ef9-949d-bb3e6fcb05b0.pngg" width="300" height="600">
+<img src="https://user-images.githubusercontent.com/89646919/160629499-ba63b6eb-7ea2-4f3d-8f98-a8814b2114e8.PNG" width="300" height="600">
 
 
 - Then you will be shown the page above. Click the three lines on the top left and then select downloads
