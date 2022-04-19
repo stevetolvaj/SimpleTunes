@@ -14,10 +14,10 @@ Simple Tunes is an android application that lets users listen to various music f
 - Download the apk file by going to this link: https://github.com/cis3296s22/SimpleTunes and then click on release v0.3.0. Then download the apk file
 
 - Open the Settings app and search for the word "unknown".
-- ![image](https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png)
 - <img src="https://user-images.githubusercontent.com/58083363/160680330-f490ce2e-748c-4093-826c-ae1f5fe76030.png" width="300" height="600">
 - Select that and then select the item that that brings you to.
 - ![image](https://user-images.githubusercontent.com/58083363/160680681-0652ebe0-d2a4-45fc-ab8b-9f4bc7b8c470.png)
+- - <img src="https://user-images.githubusercontent.com/58083363/160680681-0652ebe0-d2a4-45fc-ab8b-9f4bc7b8c470.png" width="300" height="600">
 - This will bring you to the following screen
 - ![image](https://user-images.githubusercontent.com/58083363/160680796-8edfc689-2909-49fe-a7a2-56f7757a8cd4.png)
 - Select Chrome, then toggle "Allow from this source"
