@@ -90,12 +90,21 @@ Simple Tunes is an android application that lets users listen to various music f
 
 -Use the previous and next buttons to navigate through tracks that are being played from a folder.
 
--You can now 
+-You can now also shuffle through the songs if playing a folder
+
+- The user can click the repeat button to repeat the current song playing or click it again to repeat the whole folder when it's finished
 
 -Changing UI coming soon!
 
 -To listen to a different downloaded mp3 file or repeat the song just click on the song button at the top left once again!
 
+
+## Features for the future:
+-Custom file browser
+
+-Custom Playlist
+
+-Download music directly through the app by providing a link
 
 # How to contribute
 Follow this project board to know the latest status of the project: https://github.com/cis3296s22/SimpleTunes/projects/1
