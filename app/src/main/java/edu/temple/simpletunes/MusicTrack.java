@@ -14,6 +14,7 @@ public class MusicTrack {
     private final String track;
     private final String artist;
     private final String album;
+    private final boolean isAudio;
     private final String TAG = "MusicTrack";
     public MusicTrack(Context ctx, @NonNull DocumentFile df){
         Log.d("MusicTrack", "MusicTrack: got DocumentFile " + df.getName() + " of type " + df.getType());
@@ -33,6 +34,7 @@ public class MusicTrack {
                 }
                 artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                 album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                isAudio = true;
                 mmr.close();
             }else{
                 this.df = df;
@@ -40,6 +42,7 @@ public class MusicTrack {
                 this.track = null;
                 this.artist = null;
                 this.album = null;
+                isAudio = false;
             }
         }else{
             this.df = df;
@@ -47,6 +50,7 @@ public class MusicTrack {
             this.track = null;
             this.artist = null;
             this.album = null;
+            isAudio = false;
         }
 
     }
@@ -67,5 +71,8 @@ public class MusicTrack {
     }
     public String getName(){
         return df.getName();
+    }
+    public boolean getIsAudio(){
+        return isAudio;
     }
 }

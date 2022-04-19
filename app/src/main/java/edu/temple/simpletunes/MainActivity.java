@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                         ArrayList<MusicTrack> list = new ArrayList<>();
                         for(int i = 0; i < contents.length; i++){
                             MusicTrack m = new MusicTrack(MainActivity.this, contents[i]);
-                            if(m.getTitle() != null){
+                            if(m.getIsAudio()){
                                 list.add(m);
                             }
                         }
