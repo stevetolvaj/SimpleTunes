@@ -3,6 +3,8 @@
 
 Simple Tunes is an android application that lets users listen to various music files on their device. These files can be anything from a downloaded fie to a something recorded and then played back. Users can open this application and scroll through all of their downloaded .mp3 files and then select something to listen to. After selecting something, the user is able to scroll through the audio file, skip to the next file or go back. The user can also play a folder of music that they have downloaded. When playing a folder the user can shuffle through the songs and choose between different repeat methods. One that repeats that song and another that repeats the whole folder.
 
+<img src="https://github.com/stevetolvaj/SimpleTunes/blob/fb3d3c28406a5bc33dcb7b4bdf4dbed74248e949/dark%20theme.jpg" width="300" height="600">
+
 # How to run
 ## Disclaimer: Android studio has a lot of issues in which sometimes your emulator(fake phone) might just randomly quit
 ## Please be patient and try again!
